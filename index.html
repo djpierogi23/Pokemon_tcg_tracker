@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pokémon TCG Collection Tracker — Track your Pokémon card collection with an interactive dashboard, progress tracking, and search.">
+    <title>Pokémon TCG Collection Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=101">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎴</text></svg>">
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav id="navbar">
+            <div class="nav-brand" id="nav-home">
+                <span class="nav-icon">🎴</span>
+                <span class="nav-title">Pokémon TCG Tracker</span>
+            </div>
+            <div class="nav-search">
+                <input type="text" id="global-search" placeholder="Search cards or sets..." autocomplete="off">
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="nav-actions">
+                <button id="btn-stats" class="nav-btn" title="Statistics">📊</button>
+                <button id="btn-import" class="nav-btn" title="Import/Export">💾</button>
+                <button id="btn-api-explorer" class="nav-btn" title="API Explorer">🌐</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main id="main-content">
+            <!-- Dashboard View (default) -->
+            <section id="dashboard-view" class="view active">
+                <!-- Grand Stats Banner -->
+                <div id="grand-stats" class="stats-banner">
+                    <div class="stat-card total">
+                        <div class="stat-value" id="total-cards">0</div>
+                        <div class="stat-label">Total Cards</div>
+                    </div>
+                    <div class="stat-card owned">
+                        <div class="stat-value" id="total-owned">0</div>
+                        <div class="stat-label">Owned</div>
+                    </div>
+                    <div class="stat-card need">
+                        <div class="stat-value" id="total-need">0</div>
+                        <div class="stat-label">Need</div>
+                    </div>
+                    <div class="stat-card percent">
+                        <div class="stat-value" id="total-percent">0%</div>
+                        <div class="stat-label">Complete</div>
+                        <div class="progress-ring-container">
+                            <svg class="progress-ring" width="80" height="80">
+                                <circle class="progress-ring-bg" cx="40" cy="40" r="35"></circle>
+                                <circle class="progress-ring-fill" id="total-progress-ring" cx="40" cy="40" r="35"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-card value" id="value-card" style="display:none">
+                        <div class="stat-value" id="total-value">$0</div>
+                        <div class="stat-label">Collection Value</div>
+                        <div class="stat-subtitle" style="font-size:11px;color:var(--text-secondary);margin-top:4px"></div>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="all">All Sets</button>
+                    <button class="filter-btn" data-filter="complete">✅ Complete</button>
+                    <button class="filter-btn" data-filter="in-progress">🔵 In Progress</button>
+                    <button class="filter-btn" data-filter="not-started">⬜ Not Started</button>
+                    <select id="sort-select" class="sort-select">
+                        <option value="default">Sort: Default</option>
+                        <option value="completion-desc">% Complete ↓</option>
+                        <option value="completion-asc">% Complete ↑</option>
+                        <option value="name-asc">Name A→Z</option>
+                        <option value="name-desc">Name Z→A</option>
+                        <option value="cards-desc">Most Cards</option>
+                    </select>
+                    <select id="bulk-fetch-select" class="sort-select" style="background:var(--accent-green);color:#000;font-weight:600">
+                        <option value="">💰 Fetch All Prices...</option>
+                    </select>
+                </div>
+
+                <!-- Generation Sections -->
+                <div id="generations-container"></div>
+            </section>
+
+            <!-- Set Detail View -->
+            <section id="set-view" class="view">
+                <div id="set-header" class="set-header">
+                    <button id="back-btn" class="back-btn">← Back</button>
+                    <div class="set-info">
+                        <h1 id="set-name"></h1>
+                        <p id="set-release-date"></p>
+                    </div>
+                    <div class="set-stats">
+                        <div class="set-stat">
+                            <span class="set-stat-value" id="set-total">0</span>
+                            <span class="set-stat-label">Cards</span>
+                        </div>
+                        <div class="set-stat owned">
+                            <span class="set-stat-value" id="set-owned">0</span>
+                            <span class="set-stat-label">Owned</span>
+                        </div>
+                        <div class="set-stat need">
+                            <span class="set-stat-value" id="set-need">0</span>
+                            <span class="set-stat-label">Need</span>
+                        </div>
+                        <div class="set-stat pct">
+                            <span class="set-stat-value" id="set-pct">0%</span>
+                            <span class="set-stat-label">Complete</span>
+                        </div>
+                        <div class="set-stat set-value" id="set-value-stat" style="display:none">
+                            <span class="set-stat-value" id="set-value">$0</span>
+                            <span class="set-stat-label">Set Value</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Set Controls -->
+                <div class="set-controls">
+                    <input type="text" id="set-search" placeholder="Search cards..." autocomplete="off">
+                    <div class="type-filters" id="type-filters"></div>
+                    <div class="set-actions">
+                        <button id="btn-show-all" class="control-btn active" data-status="all">All</button>
+                        <button id="btn-show-have" class="control-btn" data-status="HAVE">Have</button>
+                        <button id="btn-show-need" class="control-btn" data-status="NEED">Need</button>
+                    </div>
+                    <div class="bulk-condition">
+                        <label>Bulk Condition:</label>
+                        <select id="bulk-condition-select">
+                            <option value="NM">NM</option>
+                            <option value="LP">LP</option>
+                            <option value="MP">MP</option>
+                            <option value="HP">HP</option>
+                            <option value="DMG">DMG</option>
+                        </select>
+                        <button id="btn-bulk-condition" class="control-btn bulk-apply-btn" title="Apply to all visible cards">Apply to Visible</button>
+                    </div>
+                </div>
+
+                <!-- Card Table -->
+                <div class="card-table-wrapper">
+                    <table id="card-table" class="card-table">
+                        <thead>
+                            <tr>
+                                <th class="col-thumb"></th>
+                                <th class="col-num sortable" data-sort="number"># <span class="sort-arrow"></span></th>
+                                <th class="col-name sortable" data-sort="name">Name <span class="sort-arrow"></span></th>
+                                <th class="col-type sortable" data-sort="type">Type <span class="sort-arrow"></span></th>
+                                <th class="col-status sortable" data-sort="status">Status <span class="sort-arrow"></span></th>
+                                <th class="col-condition sortable" data-sort="condition">Cond. <span class="sort-arrow"></span></th>
+                                <th class="col-price sortable" data-sort="price">Price <span class="sort-arrow"></span></th>
+                                <th class="col-paid sortable" data-sort="pricePaid">Paid <span class="sort-arrow"></span></th>
+                                <th class="col-qty sortable" data-sort="qty-firstEdition">1st Ed. <span class="sort-arrow"></span></th>
+                                <th class="col-qty sortable" data-sort="qty-unlimited">Unlimited <span class="sort-arrow"></span></th>
+                                <th class="col-qty sortable" data-sort="qty-holofoil">Holofoil <span class="sort-arrow"></span></th>
+                                <th class="col-qty sortable" data-sort="qty-reverseHolofoil">Rev. Holo <span class="sort-arrow"></span></th>
+                                <th class="col-rarity sortable" data-sort="rarity">Rarity <span class="sort-arrow"></span></th>
+                                <th class="col-note sortable" data-sort="note">Note <span class="sort-arrow"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="card-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Stats View -->
+            <section id="stats-view" class="view">
+                <button id="stats-back-btn" class="back-btn">← Back to Dashboard</button>
+                <h2 class="section-title">Collection Statistics</h2>
+                <div id="stats-content" class="stats-grid"></div>
+            </section>
+
+            <!-- Import/Export View -->
+            <section id="import-view" class="view">
+                <button id="import-back-btn" class="back-btn">← Back to Dashboard</button>
+                <h2 class="section-title">Data Management</h2>
+                <div class="import-export-grid">
+                    <div class="ie-card api-key-card">
+                        <h3>🔑 PokéWallet API Key</h3>
+                        <p>Enter your free API key from <a href="https://pokewallet.io" target="_blank" style="color:var(--accent-primary)">pokewallet.io</a> to enable live pricing.</p>
+                        <input type="text" id="api-key-input" placeholder="pk_live_..." class="api-key-input">
+                        <button id="btn-save-key" class="primary-btn">Save API Key</button>
+                        <div id="api-key-status" class="api-key-status"></div>
+                    </div>
+                    <div class="ie-card">
+                        <h3>📥 Import Excel</h3>
+                        <p>Upload your Pokémon TCG spreadsheet to initialize or update your collection.</p>
+                        <input type="file" id="file-input" accept=".xlsx,.xls" style="display:none">
+                        <button id="btn-upload" class="primary-btn">Upload .xlsx File</button>
+                    </div>
+                    <div class="ie-card">
+                        <h3>💾 Export Backup</h3>
+                        <p>Download your collection data as a JSON file for safekeeping.</p>
+                        <button id="btn-export" class="primary-btn">Export JSON</button>
+                    </div>
+                    <div class="ie-card">
+                        <h3>📂 Import Backup</h3>
+                        <p>Restore your collection from a previously exported JSON backup.</p>
+                        <input type="file" id="json-input" accept=".json" style="display:none">
+                        <button id="btn-import-json" class="primary-btn">Import JSON</button>
+                    </div>
+                    <div class="ie-card">
+                        <h3>🛒 TCGPlayer Order Import</h3>
+                        <p>Paste your TCGPlayer order page text to update card conditions. Select all text on the order page(s) and paste below.</p>
+                        <textarea id="tcgplayer-paste" rows="6" placeholder="Paste TCGPlayer order text here..."></textarea>
+                        <button id="btn-import-tcgplayer" class="primary-btn" style="margin-top:8px">Parse Orders</button>
+                        <div id="tcgplayer-results" style="display:none;margin-top:12px">
+                            <h4 id="tcgplayer-summary"></h4>
+                            <div id="tcgplayer-matches" style="max-height:300px;overflow-y:auto;margin:8px 0"></div>
+                            <button id="btn-apply-tcgplayer" class="primary-btn">Apply Changes</button>
+                        </div>
+                    </div>
+                    <div class="ie-card">
+                        <h3>📋 Import History</h3>
+                        <p>Review past imports and find unmatched cards to fix manually.</p>
+                        <div id="tcgplayer-log"></div>
+                        <button id="btn-clear-import-log" class="danger-btn" style="margin-top:8px;font-size:12px">Clear Log</button>
+                    </div>
+                    <div class="ie-card danger">
+                        <h3>🗑️ Reset Data</h3>
+                        <p>Clear all collection data and start fresh. This cannot be undone.</p>
+                        <button id="btn-reset" class="danger-btn">Reset Everything</button>
+                    </div>
+                </div>
+            </section>
+            <!-- API Explorer View -->
+            <section id="api-explorer-view" class="view">
+                <button id="api-explorer-back-btn" class="back-btn">← Back to Dashboard</button>
+                <h2 class="section-title">🌐 API Explorer — pokemontcg.io</h2>
+                <p style="color:var(--text-secondary);margin-bottom:16px">Browse all sets and cards available from the pokemontcg.io API. Click a set to view its cards.</p>
+                
+                <div id="api-explorer-controls" style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+                    <input type="text" id="api-explorer-search" placeholder="Search sets..." style="flex:1;min-width:200px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px">
+                    <button id="api-explorer-fetch" class="primary-btn">🔄 Fetch All Sets</button>
+                    <span id="api-explorer-status" style="color:var(--text-secondary);font-size:13px"></span>
+                </div>
+                
+                <div id="api-explorer-sets" class="sets-grid" style="margin-bottom:24px"></div>
+                
+                <!-- Set detail panel (hidden until a set is clicked) -->
+                <div id="api-set-detail" style="display:none">
+                    <button id="api-set-back" class="back-btn" style="margin-bottom:12px">← Back to Sets</button>
+                    <div id="api-set-header" style="margin-bottom:16px"></div>
+                    <div id="api-set-cards-status" style="color:var(--text-secondary);margin-bottom:12px"></div>
+                    <div class="card-table-wrapper">
+                        <table class="card-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:60px">Image</th>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Supertype</th>
+                                    <th>Types</th>
+                                    <th>Subtypes</th>
+                                    <th>Rarity</th>
+                                    <th>Artist</th>
+                                    <th>HP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="api-set-cards-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="data/set_symbols.js?v=101"></script>
+    <script src="data/collection.js?v=101"></script>
+    <script src="app.js?v=101"></script>
+</body>
+</html>
