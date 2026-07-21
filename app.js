@@ -968,6 +968,15 @@ class CollectionStore {
         return null;
     }
 
+    findSetByName(name) {
+        const normalized = name.trim().toLowerCase();
+        for (const gen of this.getGenerations()) {
+            const set = gen.sets.find(s => s.name.trim().toLowerCase() === normalized);
+            if (set) return { gen, set };
+        }
+        return null;
+    }
+
     toggleCardStatus(genId, setId, cardIndex) {
         const set = this.getSet(genId, setId);
         if (set && set.cards[cardIndex]) {
@@ -2906,8 +2915,8 @@ class App {
         // Store current API set for add button
         this._currentApiSet = apiSet;
         
-        // Check if set already exists in collection
-        const existsInCollection = this.store.findSetById(apiSet.id);
+        // Check if set already exists in collection (match by name since IDs differ)
+        const existsInCollection = this.store.findSetByName(apiSet.name) || this.store.findSetById(apiSet.id);
         
         // Render header
         const header = document.getElementById('api-set-header');
@@ -2926,9 +2935,10 @@ class App {
                     ${apiSet.legalities ? `<span>⚖️ ${Object.entries(apiSet.legalities).map(([k,v]) => k + ': ' + (typeof v === 'boolean' ? (v ? 'Legal' : 'No') : v)).join(', ')}</span>` : ''}
                     <span style="background:${apiSet._source === 'tcgdex' ? 'rgba(76,175,80,0.15);color:#81C784' : 'rgba(33,150,243,0.15);color:#64B5F6'}">${apiSet._source === 'tcgdex' ? '🌏 TCGdex' : '🌐 pokemontcg.io'}</span>
                 </div>
-                <div style="margin-top:12px">
+                <div style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
                     ${existsInCollection 
-                        ? `<span style="color:var(--accent-green, #4CAF50);font-size:13px">✅ Already in collection (${existsInCollection.gen.name})</span>`
+                        ? `<span style="color:var(--accent-green, #4CAF50);font-size:13px">✅ Already in collection (${existsInCollection.gen.name})</span>
+                           <button id="btn-sync-api-set" class="primary-btn" style="font-size:13px;padding:8px 16px;background:linear-gradient(135deg,#FF9800,#F57C00)">🔄 Sync from API</button>`
                         : `<button id="btn-add-api-set" class="primary-btn" style="font-size:13px;padding:8px 16px">➕ Add Set to Collection</button>`
                     }
                 </div>
@@ -2939,6 +2949,12 @@ class App {
         const addBtn = document.getElementById('btn-add-api-set');
         if (addBtn) {
             addBtn.addEventListener('click', () => this.showAddSetPicker());
+        }
+        
+        // Bind the sync button if it exists
+        const syncBtn = document.getElementById('btn-sync-api-set');
+        if (syncBtn && existsInCollection) {
+            syncBtn.addEventListener('click', () => this.syncSetFromApi(existsInCollection, apiSet));
         }
         
         // Fetch cards
@@ -3009,6 +3025,259 @@ class App {
         } catch (e) {
             cardsStatus.textContent = `❌ Error: ${e.message}`;
             console.error('API card fetch error:', e);
+        }
+    }
+
+    async syncSetFromApi(collectionMatch, apiSet) {
+        const { gen, set: collectionSet } = collectionMatch;
+        const syncBtn = document.getElementById('btn-sync-api-set');
+        if (syncBtn) { syncBtn.disabled = true; syncBtn.textContent = '⏳ Analyzing...'; }
+        
+        try {
+            // Fetch all API cards
+            let apiCards = [];
+            if (apiSet._source === 'tcgdex') {
+                const resp = await fetch(`https://api.tcgdex.net/v2/${apiSet._lang}/sets/${apiSet.id}`);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const setData = await resp.json();
+                apiCards = (setData.cards || []).map(c => ({
+                    number: c.localId || c.id || '',
+                    name: c.name || '',
+                    type: (c.types || []).join('/') || c.category || '',
+                    rarity: c.rarity || '',
+                }));
+            } else {
+                let page = 1;
+                while (true) {
+                    const resp = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${apiSet.id}&page=${page}&pageSize=250`);
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const data = await resp.json();
+                    apiCards = apiCards.concat((data.data || []).map(c => ({
+                        number: c.number || '',
+                        name: c.name || '',
+                        type: (c.types || []).join('/') || c.supertype || '',
+                        rarity: c.rarity || '',
+                    })));
+                    if (apiCards.length >= (data.totalCount || 0)) break;
+                    page++;
+                }
+            }
+            
+            // Sort API cards by number
+            apiCards.sort((a, b) => {
+                const na = parseInt(a.number) || 0;
+                const nb = parseInt(b.number) || 0;
+                return na - nb || (a.number || '').localeCompare(b.number || '');
+            });
+            
+            // Normalize card number for matching: "001/086" -> "1", "1" -> "1"
+            const normalizeNum = (n) => {
+                if (!n) return '';
+                return String(parseInt(String(n).split('/')[0]) || n).replace(/^0+/, '') || '0';
+            };
+            
+            // Build diff
+            const changes = [];
+            const newCards = [];
+            const collectionByNum = new Map();
+            collectionSet.cards.forEach((c, idx) => {
+                const key = normalizeNum(c.number);
+                if (!collectionByNum.has(key)) collectionByNum.set(key, { card: c, index: idx });
+            });
+            
+            for (const apiCard of apiCards) {
+                const key = normalizeNum(apiCard.number);
+                const match = collectionByNum.get(key);
+                
+                if (match) {
+                    // Found matching card — check for differences
+                    const diffs = [];
+                    if (match.card.name !== apiCard.name && apiCard.name) {
+                        diffs.push({ field: 'name', old: match.card.name, new: apiCard.name });
+                    }
+                    if (match.card.type !== apiCard.type && apiCard.type) {
+                        diffs.push({ field: 'type', old: match.card.type || '—', new: apiCard.type });
+                    }
+                    if (match.card.rarity !== apiCard.rarity && apiCard.rarity) {
+                        diffs.push({ field: 'rarity', old: match.card.rarity || '—', new: apiCard.rarity });
+                    }
+                    // Check number format (e.g. "1" vs "001/086")
+                    const apiNumFormatted = apiCard.number.includes('/') ? apiCard.number : 
+                        (apiSet.printedTotal ? apiCard.number.padStart(3,'0') + '/' + String(apiSet.printedTotal).padStart(3,'0') : apiCard.number);
+                    if (match.card.number !== apiNumFormatted && apiNumFormatted) {
+                        diffs.push({ field: 'number', old: match.card.number, new: apiNumFormatted });
+                    }
+                    
+                    if (diffs.length > 0) {
+                        changes.push({ index: match.index, card: match.card, diffs, apiCard, apiNumFormatted });
+                    }
+                    collectionByNum.delete(key); // mark as matched
+                } else {
+                    // New card not in collection
+                    const apiNumFormatted = apiCard.number.includes('/') ? apiCard.number : 
+                        (apiSet.printedTotal ? apiCard.number.padStart(3,'0') + '/' + String(apiSet.printedTotal).padStart(3,'0') : apiCard.number);
+                    newCards.push({ ...apiCard, number: apiNumFormatted });
+                }
+            }
+            
+            // Check symbol update
+            const currentSymbol = typeof SET_SYMBOLS !== 'undefined' && SET_SYMBOLS[collectionSet.name];
+            const apiSymbol = apiSet.images?.symbol || '';
+            const symbolChanged = apiSymbol && (!currentSymbol || currentSymbol !== apiSymbol);
+            
+            // Show preview overlay
+            if (changes.length === 0 && newCards.length === 0 && !symbolChanged) {
+                if (syncBtn) { syncBtn.disabled = false; syncBtn.textContent = '🔄 Sync from API'; }
+                alert('✅ This set is already in sync! No changes needed.');
+                return;
+            }
+            
+            this._showSyncPreview(gen, collectionSet, changes, newCards, symbolChanged, apiSet, apiSymbol);
+            if (syncBtn) { syncBtn.disabled = false; syncBtn.textContent = '🔄 Sync from API'; }
+            
+        } catch (e) {
+            console.error('Sync error:', e);
+            if (syncBtn) { syncBtn.disabled = false; syncBtn.textContent = '🔄 Sync from API'; }
+            alert(`❌ Error syncing: ${e.message}`);
+        }
+    }
+
+    _showSyncPreview(gen, collectionSet, changes, newCards, symbolChanged, apiSet, apiSymbol) {
+        const overlay = document.createElement('div');
+        overlay.id = 'sync-preview-overlay';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)';
+        
+        let previewHTML = `
+            <div class="sync-preview-modal">
+                <h3>🔄 Sync Preview — ${this.escapeHtml(collectionSet.name)}</h3>
+                <p class="sync-preview-subtitle">Review changes before applying. Your have/need status, conditions, prices, and notes will be preserved.</p>
+                <div class="sync-preview-summary">
+                    <span class="sync-stat sync-stat-update">📝 ${changes.length} card${changes.length !== 1 ? 's' : ''} to update</span>
+                    <span class="sync-stat sync-stat-new">➕ ${newCards.length} new card${newCards.length !== 1 ? 's' : ''} to add</span>
+                    ${symbolChanged ? '<span class="sync-stat sync-stat-symbol">🎨 Symbol/images will update</span>' : ''}
+                </div>`;
+        
+        // Show card updates
+        if (changes.length > 0) {
+            previewHTML += `<div class="sync-section"><h4>📝 Card Updates</h4><table class="sync-diff-table">
+                <thead><tr><th>#</th><th>Field</th><th>Current</th><th></th><th>API</th></tr></thead><tbody>`;
+            for (const ch of changes) {
+                for (const d of ch.diffs) {
+                    previewHTML += `<tr>
+                        <td>${this.escapeHtml(ch.card.number)}</td>
+                        <td><span class="sync-field-badge">${d.field}</span></td>
+                        <td class="sync-old">${this.escapeHtml(d.old || '—')}</td>
+                        <td class="sync-arrow">→</td>
+                        <td class="sync-new">${this.escapeHtml(d.new || '—')}</td>
+                    </tr>`;
+                }
+            }
+            previewHTML += `</tbody></table></div>`;
+        }
+        
+        // Show new cards
+        if (newCards.length > 0) {
+            previewHTML += `<div class="sync-section"><h4>➕ New Cards (will be added as NEED)</h4><table class="sync-diff-table">
+                <thead><tr><th>#</th><th>Name</th><th>Type</th><th>Rarity</th></tr></thead><tbody>`;
+            for (const c of newCards.slice(0, 50)) {
+                previewHTML += `<tr>
+                    <td>${this.escapeHtml(c.number)}</td>
+                    <td>${this.escapeHtml(c.name)}</td>
+                    <td>${this.escapeHtml(c.type || '—')}</td>
+                    <td>${this.escapeHtml(c.rarity || '—')}</td>
+                </tr>`;
+            }
+            if (newCards.length > 50) {
+                previewHTML += `<tr><td colspan="4" style="text-align:center;color:var(--text-secondary)">... and ${newCards.length - 50} more</td></tr>`;
+            }
+            previewHTML += `</tbody></table></div>`;
+        }
+        
+        // Symbol update
+        if (symbolChanged) {
+            previewHTML += `<div class="sync-section"><h4>🎨 Symbol & Image Update</h4>
+                <p style="font-size:13px;color:var(--text-secondary)">Card thumbnails and set logo will use the correct API images.</p></div>`;
+        }
+        
+        previewHTML += `
+                <div class="sync-preview-actions">
+                    <button id="sync-apply-btn" class="primary-btn" style="background:linear-gradient(135deg,#FF9800,#F57C00);padding:10px 24px">✅ Apply ${changes.length + newCards.length} Changes</button>
+                    <button id="sync-cancel-btn" style="padding:10px 24px;background:transparent;border:1px solid var(--border-color);border-radius:8px;color:var(--text-secondary);cursor:pointer">Cancel</button>
+                </div>
+            </div>`;
+        
+        overlay.innerHTML = previewHTML;
+        document.body.appendChild(overlay);
+        
+        // Bind actions
+        document.getElementById('sync-cancel-btn').addEventListener('click', () => overlay.remove());
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+        
+        document.getElementById('sync-apply-btn').addEventListener('click', () => {
+            this._applySyncChanges(gen, collectionSet, changes, newCards, symbolChanged, apiSet, apiSymbol);
+            overlay.remove();
+        });
+    }
+
+    _applySyncChanges(gen, collectionSet, changes, newCards, symbolChanged, apiSet, apiSymbol) {
+        const genId = gen.id;
+        const setId = collectionSet.id;
+        
+        // Apply card updates
+        for (const ch of changes) {
+            const card = collectionSet.cards[ch.index];
+            if (!card) continue;
+            
+            for (const d of ch.diffs) {
+                const oldVal = card[d.field];
+                card[d.field] = d.new;
+                // Track changes for persistence
+                this.store.changes[`${genId}/${setId}/${ch.index}/${d.field}`] = d.new;
+            }
+        }
+        
+        // Add new cards
+        for (const newCard of newCards) {
+            const cardObj = {
+                number: newCard.number,
+                name: newCard.name,
+                type: newCard.type || '',
+                status: 'NEED',
+                stock: 0,
+                quantities: { normal: 0, holofoil: 0, reverseHolofoil: 0, firstEdition: 0, unlimited: 0 },
+                rarity: newCard.rarity || '',
+                note: '',
+                condition: ''
+            };
+            collectionSet.cards.push(cardObj);
+        }
+        
+        // Re-sort cards by number
+        collectionSet.cards.sort((a, b) => {
+            const na = parseInt(a.number) || 0;
+            const nb = parseInt(b.number) || 0;
+            return na - nb || (a.number || '').localeCompare(b.number || '');
+        });
+        
+        // Update symbol
+        if (symbolChanged && apiSymbol && typeof SET_SYMBOLS !== 'undefined') {
+            SET_SYMBOLS[collectionSet.name] = apiSymbol;
+        }
+        
+        // Save
+        this.store.save();
+        
+        // Show success
+        const total = changes.length + newCards.length;
+        const cardsStatus = document.getElementById('api-set-cards-status');
+        if (cardsStatus) {
+            cardsStatus.textContent = `✅ Synced! Updated ${changes.length} cards, added ${newCards.length} new cards.`;
+        }
+        
+        // Update the sync button
+        const syncBtn = document.getElementById('btn-sync-api-set');
+        if (syncBtn) {
+            syncBtn.outerHTML = `<span style="color:var(--accent-green, #4CAF50);font-size:13px">✅ Synced ${total} changes</span>`;
         }
     }
 

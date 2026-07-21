@@ -1593,3 +1593,100 @@ main {
     padding: 4px 10px;
     border-radius: 6px;
 }
+
+/* ==========================================
+   SYNC PREVIEW MODAL
+   ========================================== */
+.sync-preview-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 700px;
+    width: 95%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.sync-preview-modal h3 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    color: var(--text-primary);
+}
+.sync-preview-subtitle {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin: 0 0 16px 0;
+}
+.sync-preview-summary {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.sync-stat {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+.sync-stat-update { background: rgba(255,152,0,0.12); color: #FFB74D; }
+.sync-stat-new { background: rgba(76,175,80,0.12); color: #81C784; }
+.sync-stat-symbol { background: rgba(33,150,243,0.12); color: #64B5F6; }
+
+.sync-section {
+    margin-bottom: 20px;
+}
+.sync-section h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+.sync-diff-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.sync-diff-table th {
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.sync-diff-table td {
+    padding: 5px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text-primary);
+}
+.sync-field-badge {
+    background: rgba(255,255,255,0.08);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-secondary);
+}
+.sync-old {
+    color: #EF9A9A;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+.sync-arrow {
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: 14px;
+}
+.sync-new {
+    color: #81C784;
+    font-weight: 600;
+}
+.sync-preview-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
