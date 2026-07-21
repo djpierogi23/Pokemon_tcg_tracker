@@ -159,9 +159,25 @@ class PriceService {
                     }
                 }
                 if (trimmed) this.saveCache();
+            } else {
+                // No localStorage cache — try loading bundled price data
+                this.loadBundledCache();
             }
         } catch (e) {
             this.cache = {};
+        }
+    }
+
+    async loadBundledCache() {
+        try {
+            const resp = await fetch('data/price_cache.json');
+            if (resp.ok) {
+                this.cache = await resp.json();
+                this.saveCache();
+                console.log(`Loaded ${Object.keys(this.cache).length} prices from bundled cache`);
+            }
+        } catch (e) {
+            // Bundled cache not available, that's fine
         }
     }
 
