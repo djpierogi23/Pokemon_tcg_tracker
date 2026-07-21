@@ -608,6 +608,14 @@ main {
     margin-top: 2px;
 }
 
+.set-logo {
+    max-height: 70px;
+    max-width: 200px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+}
+
 .set-stats {
     display: flex;
     gap: 16px;

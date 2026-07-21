@@ -1966,6 +1966,19 @@ class App {
         document.getElementById('set-owned').textContent = totals.owned;
         document.getElementById('set-need').textContent = totals.need;
         document.getElementById('set-pct').textContent = totals.percent + '%';
+
+        // Set the full logo image
+        const logoEl = document.getElementById('set-logo');
+        const symbolUrl = typeof SET_SYMBOLS !== 'undefined' && SET_SYMBOLS[set.name];
+        if (symbolUrl && logoEl) {
+            const logoUrl = symbolUrl.replace('/symbol.png', '/logo.png');
+            logoEl.src = logoUrl;
+            logoEl.alt = set.name + ' logo';
+            logoEl.style.display = '';
+            logoEl.onerror = () => { logoEl.style.display = 'none'; };
+        } else if (logoEl) {
+            logoEl.style.display = 'none';
+        }
     }
 
     renderTypeFilters() {
