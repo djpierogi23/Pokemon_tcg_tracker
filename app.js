@@ -969,12 +969,59 @@ class CollectionStore {
     }
 
     findSetByName(name) {
-        const normalized = name.trim().toLowerCase();
+        // Normalize: lowercase, strip punctuation, replace & with and, collapse whitespace
+        const normalize = (s) => s.trim().toLowerCase()
+            .replace(/[''\u2019]/g, '')      // remove apostrophes
+            .replace(/&/g, ' and ')          // & -> and
+            .replace(/[():\-–—]/g, ' ')      // remove parens, colons, dashes
+            .replace(/\s+/g, ' ')            // collapse whitespace
+            .trim();
+        
+        const target = normalize(name);
+        
+        // Pass 1: exact normalized match
         for (const gen of this.getGenerations()) {
-            const set = gen.sets.find(s => s.name.trim().toLowerCase() === normalized);
+            const set = gen.sets.find(s => normalize(s.name) === target);
             if (set) return { gen, set };
         }
-        return null;
+        
+        // Pass 2: one name contains the other (handles "Base Set" matching "Base Set (Unlimited)")
+        for (const gen of this.getGenerations()) {
+            const set = gen.sets.find(s => {
+                const n = normalize(s.name);
+                return n.includes(target) || target.includes(n);
+            });
+            if (set) return { gen, set };
+        }
+        
+        // Pass 3: word-overlap scoring for tough cases (e.g. "McDonald's 25th Anniversary Promos" vs "McDonald's Collection 2021")
+        // Extract the core identifying words, ignoring common filler
+        const stopWords = new Set(['the','a','an','of','and','or','collection','promos','promo','black','star','set','base','trainer','kit']);
+        const getKeyWords = (s) => normalize(s).split(' ').filter(w => w.length > 1 && !stopWords.has(w));
+        
+        const targetWords = getKeyWords(name);
+        if (targetWords.length === 0) return null;
+        
+        let bestMatch = null;
+        let bestScore = 0;
+        
+        for (const gen of this.getGenerations()) {
+            for (const set of gen.sets) {
+                const setWords = getKeyWords(set.name);
+                if (setWords.length === 0) continue;
+                
+                // Count overlapping words
+                const overlap = targetWords.filter(w => setWords.includes(w)).length;
+                const score = overlap / Math.max(targetWords.length, setWords.length);
+                
+                if (score > bestScore && score >= 0.5) {
+                    bestScore = score;
+                    bestMatch = { gen, set };
+                }
+            }
+        }
+        
+        return bestMatch;
     }
 
     toggleCardStatus(genId, setId, cardIndex) {
