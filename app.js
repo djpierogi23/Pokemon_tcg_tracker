@@ -2844,9 +2844,11 @@ class App {
             return;
         }
         
-        container.innerHTML = sets.map(s => `
+        container.innerHTML = sets.map(s => {
+            const symUrl = s.images?.symbol || '';
+            return `
             <div class="api-set-card" data-api-set-id="${s.id}">
-                <img class="api-set-logo" src="${s.images?.symbol || ''}" alt="" onerror="this.style.display='none'">
+                ${symUrl ? `<img class="api-set-logo" src="${symUrl}" alt="" onerror="this.style.display='none'">` : '<span class="api-set-logo-placeholder">🃏</span>'}
                 <div class="api-set-meta">
                     <h3 title="${this.escapeHtml(s.name)}">${this.escapeHtml(s.name)}</h3>
                     <p class="api-set-series">${this.escapeHtml(s.series || '')}</p>
@@ -2857,7 +2859,7 @@ class App {
                     </div>
                 </div>
             </div>
-        `).join('');
+        `}).join('');
         
         // Attach click handlers
         container.querySelectorAll('.api-set-card').forEach(card => {
@@ -2909,8 +2911,10 @@ class App {
         
         // Render header
         const header = document.getElementById('api-set-header');
+        const logoUrl = apiSet.images?.logo || apiSet.images?.symbol || '';
+        const symbolUrl = apiSet.images?.symbol || '';
         header.innerHTML = `
-            <img class="api-detail-logo" src="${apiSet.images?.logo || apiSet.images?.symbol || ''}" alt="" onerror="this.src='${apiSet.images?.symbol || ''}'">
+            ${logoUrl ? `<img class="api-detail-logo" src="${logoUrl}" alt="" onerror="${symbolUrl && symbolUrl !== logoUrl ? `this.onerror=null;this.src='${symbolUrl}'` : `this.style.display='none'`}">` : ''}
             <div class="api-detail-info">
                 <h2>${this.escapeHtml(apiSet.name)}</h2>
                 <div class="api-detail-stats">
