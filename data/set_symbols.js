@@ -143,7 +143,7 @@ const SET_SYMBOLS = {
     "Wizards Black Star Promos": "https://images.pokemontcg.io/basep/symbol.png",
     "X and Y": "https://images.pokemontcg.io/xy1/symbol.png",
     "X and Y Black Star Promos": "https://images.pokemontcg.io/xyp/symbol.png",
-    "Black Bolt": "https://images.pokemontcg.io/sv8/symbol.png",
+    "Black Bolt": "https://images.pokemontcg.io/zsv10pt5/symbol.png",
     "DP Trainer Kit: Manaphy & Lucario": "https://images.pokemontcg.io/dp1/symbol.png",
     "EX Crystal Guardians": "https://images.pokemontcg.io/ex14/symbol.png",
     "EX Trainer Kit Latias": "https://images.pokemontcg.io/tk1a/symbol.png",
