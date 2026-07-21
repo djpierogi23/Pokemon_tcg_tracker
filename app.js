@@ -1136,6 +1136,11 @@ class App {
         document.getElementById('api-explorer-fetch').addEventListener('click', () => this.fetchApiSets());
         document.getElementById('api-set-back').addEventListener('click', () => this.showApiSets());
         document.getElementById('api-explorer-search').addEventListener('input', (e) => this.filterApiSets(e.target.value));
+        document.getElementById('api-explorer-lang').addEventListener('change', () => {
+            this._apiSetsCache = null;
+            this._apiSetsFiltered = null;
+            this.fetchApiSets();
+        });
         document.getElementById('back-btn').addEventListener('click', () => this.showView('dashboard'));
         document.getElementById('stats-back-btn').addEventListener('click', () => this.showView('dashboard'));
         document.getElementById('import-back-btn').addEventListener('click', () => this.showView('dashboard'));
@@ -2755,23 +2760,65 @@ class App {
         const status = document.getElementById('api-explorer-status');
         const container = document.getElementById('api-explorer-sets');
         const btn = document.getElementById('api-explorer-fetch');
+        const lang = document.getElementById('api-explorer-lang').value || 'en';
         
         btn.disabled = true;
-        status.textContent = '⏳ Fetching sets from pokemontcg.io...';
         container.innerHTML = '';
         
         try {
             let allSets = [];
-            let page = 1;
-            while (true) {
-                const resp = await fetch(`https://api.pokemontcg.io/v2/sets?page=${page}&pageSize=250`);
-                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                const data = await resp.json();
-                allSets = allSets.concat(data.data || []);
-                status.textContent = `⏳ Fetched ${allSets.length}/${data.totalCount} sets...`;
-                if (allSets.length >= data.totalCount) break;
-                page++;
+            
+            if (lang === 'en') {
+                // English: use pokemontcg.io for richer data (images, legalities, etc.)
+                status.textContent = '⏳ Fetching sets from pokemontcg.io...';
+                let page = 1;
+                while (true) {
+                    const resp = await fetch(`https://api.pokemontcg.io/v2/sets?page=${page}&pageSize=250`);
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const data = await resp.json();
+                    allSets = allSets.concat(data.data || []);
+                    status.textContent = `⏳ Fetched ${allSets.length}/${data.totalCount} sets...`;
+                    if (allSets.length >= data.totalCount) break;
+                    page++;
+                }
+            } else {
+                // Non-English: use TCGdex API
+                status.textContent = `⏳ Fetching ${lang.toUpperCase()} sets from TCGdex...`;
+                const listResp = await fetch(`https://api.tcgdex.net/v2/${lang}/sets`);
+                if (!listResp.ok) throw new Error(`HTTP ${listResp.status}`);
+                const tcgdexList = await listResp.json();
+                
+                // Fetch individual set details in batches for full info (logos, dates, series)
+                status.textContent = `⏳ Loading details for ${tcgdexList.length} sets...`;
+                const batchSize = 10;
+                for (let i = 0; i < tcgdexList.length; i += batchSize) {
+                    const batch = tcgdexList.slice(i, i + batchSize);
+                    const results = await Promise.allSettled(
+                        batch.map(s => fetch(`https://api.tcgdex.net/v2/${lang}/sets/${s.id}`).then(r => r.ok ? r.json() : null))
+                    );
+                    for (let j = 0; j < results.length; j++) {
+                        const detail = results[j].status === 'fulfilled' ? results[j].value : null;
+                        const listItem = batch[j];
+                        allSets.push({
+                            id: listItem.id,
+                            name: detail?.name || listItem.name,
+                            series: detail?.serie?.name || '',
+                            releaseDate: detail?.releaseDate || '',
+                            total: detail?.cardCount?.total || listItem.cardCount?.total || 0,
+                            printedTotal: detail?.cardCount?.official || listItem.cardCount?.official || 0,
+                            images: {
+                                symbol: detail?.symbol ? detail.symbol + '.png' : '',
+                                logo: detail?.logo ? detail.logo + '.png' : '',
+                            },
+                            legalities: detail?.legal || null,
+                            _source: 'tcgdex',
+                            _lang: lang,
+                        });
+                    }
+                    status.textContent = `⏳ Loaded ${allSets.length}/${tcgdexList.length} sets...`;
+                }
             }
+            
             // Sort by release date descending (newest first)
             allSets.sort((a, b) => (b.releaseDate || '').localeCompare(a.releaseDate || ''));
             this._apiSetsCache = allSets;
@@ -2872,7 +2919,8 @@ class App {
                     <span>📦 Series: ${this.escapeHtml(apiSet.series || 'N/A')}</span>
                     <span>🆔 ID: ${apiSet.id}</span>
                     ${apiSet.ptcgoCode ? `<span>PTCGO: ${apiSet.ptcgoCode}</span>` : ''}
-                    ${apiSet.legalities ? `<span>⚖️ ${Object.entries(apiSet.legalities).map(([k,v]) => k + ': ' + v).join(', ')}</span>` : ''}
+                    ${apiSet.legalities ? `<span>⚖️ ${Object.entries(apiSet.legalities).map(([k,v]) => k + ': ' + (typeof v === 'boolean' ? (v ? 'Legal' : 'No') : v)).join(', ')}</span>` : ''}
+                    <span style="background:${apiSet._source === 'tcgdex' ? 'rgba(76,175,80,0.15);color:#81C784' : 'rgba(33,150,243,0.15);color:#64B5F6'}">${apiSet._source === 'tcgdex' ? '🌏 TCGdex' : '🌐 pokemontcg.io'}</span>
                 </div>
                 <div style="margin-top:12px">
                     ${existsInCollection 
@@ -2897,22 +2945,46 @@ class App {
         
         try {
             let allCards = [];
-            let page = 1;
-            while (true) {
-                const resp = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${apiSet.id}&page=${page}&pageSize=250`);
+            
+            if (apiSet._source === 'tcgdex') {
+                // TCGdex: fetch set detail which includes card list
+                const resp = await fetch(`https://api.tcgdex.net/v2/${apiSet._lang}/sets/${apiSet.id}`);
                 if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                const data = await resp.json();
-                allCards = allCards.concat(data.data || []);
-                cardsStatus.textContent = `⏳ Fetched ${allCards.length}/${data.totalCount || '?'} cards...`;
-                if (allCards.length >= (data.totalCount || 0)) break;
-                page++;
+                const setData = await resp.json();
+                const cardList = setData.cards || [];
+                cardsStatus.textContent = `⏳ Loading ${cardList.length} cards...`;
+                
+                // Normalize TCGdex cards to match pokemontcg.io format
+                allCards = cardList.map(c => ({
+                    number: c.localId || c.id || '',
+                    name: c.name || '',
+                    supertype: c.category || '',
+                    types: c.types || [],
+                    subtypes: c.stage ? [c.stage] : [],
+                    rarity: c.rarity || '—',
+                    artist: c.illustrator || '—',
+                    hp: c.hp || '',
+                    images: { small: c.image ? c.image + '/low.png' : '' },
+                }));
+            } else {
+                // pokemontcg.io: paginated card fetch
+                let page = 1;
+                while (true) {
+                    const resp = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${apiSet.id}&page=${page}&pageSize=250`);
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const data = await resp.json();
+                    allCards = allCards.concat(data.data || []);
+                    cardsStatus.textContent = `⏳ Fetched ${allCards.length}/${data.totalCount || '?'} cards...`;
+                    if (allCards.length >= (data.totalCount || 0)) break;
+                    page++;
+                }
             }
             
             // Sort by card number
             allCards.sort((a, b) => {
                 const na = parseInt(a.number) || 0;
                 const nb = parseInt(b.number) || 0;
-                return na - nb || a.number.localeCompare(b.number);
+                return na - nb || (a.number || '').localeCompare(b.number || '');
             });
             
             cardsStatus.textContent = `✅ ${allCards.length} cards loaded`;

@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=103">
+    <link rel="stylesheet" href="styles.css?v=104">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎴</text></svg>">
 </head>
 <body>
@@ -232,12 +232,25 @@
             <!-- API Explorer View -->
             <section id="api-explorer-view" class="view">
                 <button id="api-explorer-back-btn" class="back-btn">← Back to Dashboard</button>
-                <h2 class="section-title">🌐 API Explorer — pokemontcg.io</h2>
-                <p style="color:var(--text-secondary);margin-bottom:16px">Browse all sets and cards available from the pokemontcg.io API. Click a set to view its cards.</p>
+                <h2 class="section-title">🌐 API Explorer</h2>
+                <p style="color:var(--text-secondary);margin-bottom:16px">Browse all sets and cards from pokemontcg.io & TCGdex. Select a language to see regional sets.</p>
                 
                 <div id="api-explorer-controls" style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+                    <select id="api-explorer-lang" style="padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;cursor:pointer">
+                        <option value="en">🇺🇸 English</option>
+                        <option value="ja">🇯🇵 Japanese</option>
+                        <option value="ko">🇰🇷 Korean</option>
+                        <option value="zh-tw">🇹🇼 Chinese (TW)</option>
+                        <option value="fr">🇫🇷 French</option>
+                        <option value="de">🇩🇪 German</option>
+                        <option value="es">🇪🇸 Spanish</option>
+                        <option value="it">🇮🇹 Italian</option>
+                        <option value="pt">🇧🇷 Portuguese</option>
+                        <option value="id">🇮🇩 Indonesian</option>
+                        <option value="th">🇹🇭 Thai</option>
+                    </select>
                     <input type="text" id="api-explorer-search" placeholder="Search sets..." style="flex:1;min-width:200px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px">
-                    <button id="api-explorer-fetch" class="primary-btn">🔄 Fetch All Sets</button>
+                    <button id="api-explorer-fetch" class="primary-btn">🔄 Fetch Sets</button>
                     <span id="api-explorer-status" style="color:var(--text-secondary);font-size:13px"></span>
                 </div>
                 
@@ -271,8 +284,8 @@
         </main>
     </div>
 
-    <script src="data/set_symbols.js?v=103"></script>
-    <script src="data/collection.js?v=103"></script>
-    <script src="app.js?v=103"></script>
+    <script src="data/set_symbols.js?v=104"></script>
+    <script src="data/collection.js?v=104"></script>
+    <script src="app.js?v=104"></script>
 </body>
 </html>
