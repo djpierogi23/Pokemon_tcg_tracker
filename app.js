@@ -2984,9 +2984,11 @@ class App {
                 </div>
                 <div style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
                     ${existsInCollection 
-                        ? `<span style="color:var(--accent-green, #4CAF50);font-size:13px">✅ Already in collection (${existsInCollection.gen.name})</span>
-                           <button id="btn-sync-api-set" class="primary-btn" style="font-size:13px;padding:8px 16px;background:linear-gradient(135deg,#FF9800,#F57C00)">🔄 Sync from API</button>`
-                        : `<button id="btn-add-api-set" class="primary-btn" style="font-size:13px;padding:8px 16px">➕ Add Set to Collection</button>`
+                        ? `<span style="color:var(--accent-green, #4CAF50);font-size:13px">✅ Linked: ${this.escapeHtml(existsInCollection.set.name)} (${existsInCollection.gen.name})</span>
+                           <button id="btn-sync-api-set" class="primary-btn" style="font-size:13px;padding:8px 16px;background:linear-gradient(135deg,#FF9800,#F57C00)">🔄 Sync from API</button>
+                           <button id="btn-link-manual" class="primary-btn" style="font-size:13px;padding:8px 16px;background:rgba(255,255,255,0.08);border:1px solid var(--border-color);color:var(--text-secondary)" title="Change which collection set this is linked to">🔗 Re-link</button>`
+                        : `<button id="btn-add-api-set" class="primary-btn" style="font-size:13px;padding:8px 16px">➕ Add Set to Collection</button>
+                           <button id="btn-link-manual" class="primary-btn" style="font-size:13px;padding:8px 16px;background:linear-gradient(135deg,#7C4DFF,#651FFF)">🔗 Link to Collection Set</button>`
                     }
                 </div>
             </div>
@@ -3002,6 +3004,12 @@ class App {
         const syncBtn = document.getElementById('btn-sync-api-set');
         if (syncBtn && existsInCollection) {
             syncBtn.addEventListener('click', () => this.syncSetFromApi(existsInCollection, apiSet));
+        }
+        
+        // Bind the manual link button
+        const linkBtn = document.getElementById('btn-link-manual');
+        if (linkBtn) {
+            linkBtn.addEventListener('click', () => this.showManualLinkPicker(apiSet));
         }
         
         // Fetch cards
@@ -3326,6 +3334,97 @@ class App {
         if (syncBtn) {
             syncBtn.outerHTML = `<span style="color:var(--accent-green, #4CAF50);font-size:13px">✅ Synced ${total} changes</span>`;
         }
+    }
+
+    showManualLinkPicker(apiSet) {
+        const gens = this.store.getGenerations();
+        const overlay = document.createElement('div');
+        overlay.id = 'manual-link-overlay';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)';
+        
+        // Build list of all collection sets
+        let setsHTML = '';
+        for (const gen of gens) {
+            for (const set of gen.sets) {
+                setsHTML += `
+                    <button class="manual-link-set-btn" data-gen-id="${gen.id}" data-set-id="${set.id}" style="
+                        text-align:left;padding:10px 14px;background:rgba(255,255,255,0.04);
+                        border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);
+                        font-size:13px;cursor:pointer;transition:all 0.15s ease;
+                        display:flex;justify-content:space-between;align-items:center;gap:12px
+                    ">
+                        <div style="min-width:0;flex:1">
+                            <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${this.escapeHtml(set.name)}</div>
+                            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${this.escapeHtml(gen.name)} · ${set.cards.length} cards</div>
+                        </div>
+                        <span style="color:var(--text-secondary);font-size:11px;white-space:nowrap">${set.releaseDate || ''}</span>
+                    </button>`;
+            }
+        }
+        
+        overlay.innerHTML = `
+            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:24px;max-width:520px;width:95%;max-height:80vh;display:flex;flex-direction:column">
+                <h3 style="color:var(--text-primary);margin:0 0 4px 0;font-size:18px">🔗 Link "${this.escapeHtml(apiSet.name)}" to Collection Set</h3>
+                <p style="color:var(--text-secondary);font-size:12px;margin:0 0 12px 0">Pick the set in your collection that matches this API set. Sync will use this pairing.</p>
+                <input type="text" id="manual-link-search" placeholder="Search your sets..." style="
+                    padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid var(--border-color);
+                    border-radius:8px;color:var(--text-primary);font-size:14px;margin-bottom:12px;width:100%;box-sizing:border-box
+                ">
+                <div id="manual-link-list" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:6px">
+                    ${setsHTML}
+                </div>
+                <button id="manual-link-cancel" style="margin-top:12px;padding:8px 20px;background:transparent;border:1px solid var(--border-color);border-radius:8px;color:var(--text-secondary);cursor:pointer;font-size:13px;align-self:flex-end">Cancel</button>
+            </div>
+        `;
+        
+        document.body.appendChild(overlay);
+        
+        // Search filter
+        const searchInput = document.getElementById('manual-link-search');
+        const listEl = document.getElementById('manual-link-list');
+        searchInput.focus();
+        searchInput.addEventListener('input', () => {
+            const q = searchInput.value.toLowerCase();
+            listEl.querySelectorAll('.manual-link-set-btn').forEach(btn => {
+                const text = btn.textContent.toLowerCase();
+                btn.style.display = text.includes(q) ? '' : 'none';
+            });
+        });
+        
+        // Hover effects + click handler
+        listEl.querySelectorAll('.manual-link-set-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', () => { btn.style.borderColor = 'var(--accent-primary)'; btn.style.background = 'rgba(255,255,255,0.08)'; });
+            btn.addEventListener('mouseleave', () => { btn.style.borderColor = 'var(--border-color)'; btn.style.background = 'rgba(255,255,255,0.04)'; });
+            btn.addEventListener('click', () => {
+                const genId = btn.dataset.genId;
+                const setId = btn.dataset.setId;
+                const gen = gens.find(g => g.id === genId);
+                const set = gen?.sets.find(s => s.id === setId);
+                if (gen && set) {
+                    overlay.remove();
+                    // Update the header to show the link, then trigger sync
+                    const collectionMatch = { gen, set };
+                    // Update header UI
+                    const headerActions = document.querySelector('#api-set-header .api-detail-info div:last-child');
+                    if (headerActions) {
+                        headerActions.innerHTML = `
+                            <span style="color:var(--accent-green, #4CAF50);font-size:13px">✅ Linked: ${this.escapeHtml(set.name)} (${this.escapeHtml(gen.name)})</span>
+                            <button id="btn-sync-api-set" class="primary-btn" style="font-size:13px;padding:8px 16px;background:linear-gradient(135deg,#FF9800,#F57C00)">🔄 Sync from API</button>
+                            <button id="btn-link-manual" class="primary-btn" style="font-size:13px;padding:8px 16px;background:rgba(255,255,255,0.08);border:1px solid var(--border-color);color:var(--text-secondary)" title="Change which collection set this is linked to">🔗 Re-link</button>
+                        `;
+                        // Re-bind buttons
+                        document.getElementById('btn-sync-api-set').addEventListener('click', () => this.syncSetFromApi(collectionMatch, apiSet));
+                        document.getElementById('btn-link-manual').addEventListener('click', () => this.showManualLinkPicker(apiSet));
+                    }
+                    // Auto-start sync
+                    this.syncSetFromApi(collectionMatch, apiSet);
+                }
+            });
+        });
+        
+        // Cancel / close
+        document.getElementById('manual-link-cancel').addEventListener('click', () => overlay.remove());
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
     }
 
     showAddSetPicker() {
