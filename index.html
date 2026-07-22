@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=112">
+    <link rel="stylesheet" href="styles.css?v=113">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎴</text></svg>">
 </head>
 <body>
@@ -16,17 +16,16 @@
         <!-- Navigation -->
         <nav id="navbar">
             <div class="nav-brand" id="nav-home">
-                <span class="nav-icon">🎴</span>
-                <span class="nav-title">Pokémon TCG Tracker</span>
+                <span class="nav-title">Pokémon TCG</span>
+            </div>
+            <div class="nav-links">
+                <a class="nav-link active" data-view="dashboard">Collection</a>
+                <a class="nav-link" data-view="stats">Statistics</a>
+                <a class="nav-link" data-view="api-explorer">Explorer</a>
+                <a class="nav-link" data-view="import">Import</a>
             </div>
             <div class="nav-search">
-                <input type="text" id="global-search" placeholder="Search cards or sets..." autocomplete="off">
-                <span class="search-icon">🔍</span>
-            </div>
-            <div class="nav-actions">
-                <button id="btn-stats" class="nav-btn" title="Statistics">📊</button>
-                <button id="btn-import" class="nav-btn" title="Import/Export">💾</button>
-                <button id="btn-api-explorer" class="nav-btn" title="API Explorer">🌐</button>
+                <input type="text" id="global-search" placeholder="Search..." autocomplete="off">
             </div>
         </nav>
 
@@ -68,9 +67,9 @@
                 <!-- Filter Bar -->
                 <div class="filter-bar">
                     <button class="filter-btn active" data-filter="all">All Sets</button>
-                    <button class="filter-btn" data-filter="complete">✅ Complete</button>
-                    <button class="filter-btn" data-filter="in-progress">🔵 In Progress</button>
-                    <button class="filter-btn" data-filter="not-started">⬜ Not Started</button>
+                    <button class="filter-btn" data-filter="complete">Complete</button>
+                    <button class="filter-btn" data-filter="in-progress">In Progress</button>
+                    <button class="filter-btn" data-filter="not-started">Not Started</button>
                     <select id="sort-select" class="sort-select">
                         <option value="default">Sort: Default</option>
                         <option value="completion-desc">% Complete ↓</option>
@@ -79,8 +78,8 @@
                         <option value="name-desc">Name Z→A</option>
                         <option value="cards-desc">Most Cards</option>
                     </select>
-                    <select id="bulk-fetch-select" class="sort-select" style="background:var(--accent-green);color:#000;font-weight:600">
-                        <option value="">💰 Fetch All Prices...</option>
+                    <select id="bulk-fetch-select" class="sort-select fetch-prices-select">
+                        <option value="">Fetch All Prices</option>
                     </select>
                 </div>
 
@@ -174,14 +173,14 @@
             <!-- Stats View -->
             <section id="stats-view" class="view">
                 <button id="stats-back-btn" class="back-btn">← Back to Dashboard</button>
-                <h2 class="section-title">Collection Statistics</h2>
+                <h2 class="section-title">Statistics</h2>
                 <div id="stats-content" class="stats-grid"></div>
             </section>
 
             <!-- Import/Export View -->
             <section id="import-view" class="view">
                 <button id="import-back-btn" class="back-btn">← Back to Dashboard</button>
-                <h2 class="section-title">Data Management</h2>
+                <h2 class="section-title">Import & Export</h2>
                 <div class="import-export-grid">
                     <div class="ie-card api-key-card">
                         <h3>🔑 PokéWallet API Key</h3>
@@ -234,8 +233,8 @@
             <!-- API Explorer View -->
             <section id="api-explorer-view" class="view">
                 <button id="api-explorer-back-btn" class="back-btn">← Back to Dashboard</button>
-                <h2 class="section-title">🌐 API Explorer</h2>
-                <p style="color:var(--text-secondary);margin-bottom:16px">Browse all sets and cards from pokemontcg.io &amp; TCGdex. Japanese sets display with English names.</p>
+                <h2 class="section-title">API Explorer</h2>
+                <p class="section-subtitle">Browse all sets and cards from pokemontcg.io & TCGdex.</p>
                 
                 <div id="api-explorer-controls" style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
                     <select id="api-explorer-lang" style="padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;cursor:pointer">
@@ -277,8 +276,8 @@
         </main>
     </div>
 
-    <script src="data/set_symbols.js?v=112"></script>
-    <script src="data/collection.js?v=112"></script>
-    <script src="app.js?v=112"></script>
+    <script src="data/set_symbols.js?v=113"></script>
+    <script src="data/collection.js?v=113"></script>
+    <script src="app.js?v=113"></script>
 </body>
 </html>

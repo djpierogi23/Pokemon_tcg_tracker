@@ -1285,11 +1285,14 @@ class App {
     }
 
     bindEvents() {
-        // Navigation
+        // Navigation — text-based nav links
         document.getElementById('nav-home').addEventListener('click', () => this.showView('dashboard'));
-        document.getElementById('btn-stats').addEventListener('click', () => this.showView('stats'));
-        document.getElementById('btn-import').addEventListener('click', () => this.showView('import'));
-        document.getElementById('btn-api-explorer').addEventListener('click', () => this.showView('api-explorer'));
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const view = link.dataset.view;
+                if (view) this.showView(view);
+            });
+        });
         document.getElementById('api-explorer-back-btn').addEventListener('click', () => this.showView('dashboard'));
         document.getElementById('api-explorer-fetch').addEventListener('click', () => this.fetchApiSets());
         document.getElementById('api-set-back').addEventListener('click', () => this.showApiSets());
@@ -1823,6 +1826,11 @@ class App {
     // =============================================
     showView(view) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+
+        // Update nav link active state
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.toggle('active', link.dataset.view === view);
+        });
 
         this.currentView = view;
 
