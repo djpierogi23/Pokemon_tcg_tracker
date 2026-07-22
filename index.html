@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=109">
+    <link rel="stylesheet" href="styles.css?v=110">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎴</text></svg>">
 </head>
 <body>
@@ -92,6 +92,7 @@
             <section id="set-view" class="view">
                 <div id="set-header" class="set-header">
                     <button id="back-btn" class="back-btn">← Back</button>
+                    <button id="btn-delete-set" class="delete-set-btn" title="Delete this set">🗑️ Delete Set</button>
                     <img id="set-logo" class="set-logo" src="" alt="" style="display:none">
                     <div class="set-info">
                         <h1 id="set-name"></h1>
@@ -162,6 +163,7 @@
                                 <th class="col-qty sortable" data-sort="qty-reverseHolofoil">Rev. Holo <span class="sort-arrow"></span></th>
                                 <th class="col-rarity sortable" data-sort="rarity">Rarity <span class="sort-arrow"></span></th>
                                 <th class="col-note sortable" data-sort="note">Note <span class="sort-arrow"></span></th>
+                                <th class="col-delete" style="width:36px"></th>
                             </tr>
                         </thead>
                         <tbody id="card-table-body"></tbody>
@@ -284,8 +286,8 @@
         </main>
     </div>
 
-    <script src="data/set_symbols.js?v=109"></script>
-    <script src="data/collection.js?v=109"></script>
-    <script src="app.js?v=109"></script>
+    <script src="data/set_symbols.js?v=110"></script>
+    <script src="data/collection.js?v=110"></script>
+    <script src="app.js?v=110"></script>
 </body>
 </html>

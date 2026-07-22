@@ -832,6 +832,7 @@ class CollectionStore {
         this.data = null;
         this.changes = {};
         this.addedSets = []; // Sets added via API Explorer, persisted separately
+        this.deletedSets = []; // Sets deleted by user, persisted separately
         this.load();
     }
 
@@ -870,6 +871,28 @@ class CollectionStore {
             } catch (e) {
                 console.warn('Failed to parse saved added sets:', e);
                 this.addedSets = [];
+            }
+        }
+
+        // Remove any previously deleted sets
+        const savedDeleted = localStorage.getItem('pokemon_tcg_deleted_sets');
+        if (savedDeleted && this.data) {
+            try {
+                this.deletedSets = JSON.parse(savedDeleted);
+                for (const del of this.deletedSets) {
+                    const gen = this.data.generations.find(g => g.id === del.genId);
+                    if (gen) {
+                        const idx = gen.sets.findIndex(s => s.id === del.setId);
+                        if (idx !== -1) gen.sets.splice(idx, 1);
+                    }
+                    // Also remove from addedSets
+                    const addedIdx = this.addedSets.findIndex(e => e.set.id === del.setId && e.genId === del.genId);
+                    if (addedIdx !== -1) this.addedSets.splice(addedIdx, 1);
+                }
+                if (this.deletedSets.length > 0) console.log('Removed ' + this.deletedSets.length + ' deleted sets');
+            } catch (e) {
+                console.warn('Failed to parse deleted sets:', e);
+                this.deletedSets = [];
             }
         }
 
@@ -958,6 +981,85 @@ class CollectionStore {
     getSet(genId, setId) {
         const gen = this.data?.generations?.find(g => g.id === genId);
         return gen?.sets?.find(s => s.id === setId);
+    }
+
+    deleteSet(genId, setId) {
+        const gen = this.data?.generations?.find(g => g.id === genId);
+        if (!gen) return false;
+        const idx = gen.sets.findIndex(s => s.id === setId);
+        if (idx === -1) return false;
+        
+        // Remove from generation
+        gen.sets.splice(idx, 1);
+        
+        // Clean up changes for this set
+        const prefix = genId + '/' + setId + '/';
+        for (const key of Object.keys(this.changes)) {
+            if (key.startsWith(prefix)) {
+                delete this.changes[key];
+            }
+        }
+        
+        // Remove from addedSets if it was an API-added set
+        const addedIdx = this.addedSets.findIndex(e => e.set.id === setId && e.genId === genId);
+        if (addedIdx !== -1) {
+            this.addedSets.splice(addedIdx, 1);
+        }
+        
+        // Track deletion so it persists across reloads
+        if (!this.deletedSets) this.deletedSets = [];
+        this.deletedSets.push({ genId, setId });
+        
+        this.save();
+        this.saveDeletedSets();
+        return true;
+    }
+
+    deleteCard(genId, setId, cardIndex) {
+        const set = this.getSet(genId, setId);
+        if (!set || cardIndex < 0 || cardIndex >= set.cards.length) return false;
+        
+        // Remove the card
+        set.cards.splice(cardIndex, 1);
+        
+        // Re-index changes: remove this card's changes, shift higher indices down
+        const prefix = genId + '/' + setId + '/';
+        const newChanges = {};
+        for (const [key, value] of Object.entries(this.changes)) {
+            if (!key.startsWith(prefix)) {
+                newChanges[key] = value;
+                continue;
+            }
+            const rest = key.substring(prefix.length);
+            const slashPos = rest.indexOf('/');
+            if (slashPos === -1) continue;
+            const idx = parseInt(rest.substring(0, slashPos));
+            const field = rest.substring(slashPos + 1);
+            if (isNaN(idx)) continue;
+            
+            if (idx === cardIndex) {
+                // Skip — this card was deleted
+                continue;
+            } else if (idx > cardIndex) {
+                // Shift down by 1
+                newChanges[prefix + (idx - 1) + '/' + field] = value;
+            } else {
+                newChanges[key] = value;
+            }
+        }
+        this.changes = newChanges;
+        
+        // Update addedSets if this is an API-added set
+        this.updateAddedSet(setId);
+        
+        this.save();
+        return true;
+    }
+
+    saveDeletedSets() {
+        try {
+            localStorage.setItem('pokemon_tcg_deleted_sets', JSON.stringify(this.deletedSets || []));
+        } catch(e) { console.warn('Failed to save deleted sets:', e); }
     }
 
     findSetById(setId) {
@@ -1200,6 +1302,20 @@ class App {
         document.getElementById('back-btn').addEventListener('click', () => this.showView('dashboard'));
         document.getElementById('stats-back-btn').addEventListener('click', () => this.showView('dashboard'));
         document.getElementById('import-back-btn').addEventListener('click', () => this.showView('dashboard'));
+
+        // Delete set button
+        document.getElementById('btn-delete-set').addEventListener('click', () => {
+            const result = this.store.findSetById(this.currentSetId);
+            if (!result) return;
+            const setName = result.set.name;
+            const cardCount = result.set.cards.length;
+            if (confirm(`Delete "${setName}"?\n\nThis will remove the entire set (${cardCount} cards) from your collection.\n\nThis cannot be undone.`)) {
+                this.store.deleteSet(this.currentGenId, this.currentSetId);
+                this.showView('dashboard');
+                this.renderDashboard();
+                this.showToast(`Deleted "${setName}"`, 'success');
+            }
+        });
 
         // Filters
         document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -2205,6 +2321,9 @@ class App {
                     <td class="col-note">
                         <span class="editable" contenteditable="true" data-field="note" data-index="${index}">${this.escapeHtml(card.note || '')}</span>
                     </td>
+                    <td class="col-delete" style="text-align:center">
+                        <button class="btn-delete-card" data-index="${index}" title="Delete card">×</button>
+                    </td>
                 </tr>
             `;
         }).join('');
@@ -2262,6 +2381,24 @@ class App {
                 this.store.updateCardField(this.currentGenId, this.currentSetId, idx, 'condition', sel.value);
                 this.renderCardTable();
                 this.updateSetValue();
+            });
+        });
+
+        // Bind delete card buttons
+        tbody.querySelectorAll('.btn-delete-card').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.dataset.index);
+                const result = this.store.findSetById(this.currentSetId);
+                if (!result) return;
+                const card = result.set.cards[idx];
+                if (!card) return;
+                const name = card.name || `#${card.number}`;
+                if (confirm(`Delete "${name}" from this set?\n\nThis cannot be undone.`)) {
+                    this.store.deleteCard(this.currentGenId, this.currentSetId, idx);
+                    this.renderSetHeader();
+                    this.renderCardTable();
+                    this.showToast(`Deleted "${name}"`, 'success');
+                }
             });
         });
 
