@@ -2975,26 +2975,45 @@ class App {
                     page++;
                 }
             } else {
-                // Non-English: use TCGdex API
-                status.textContent = `⏳ Fetching ${lang.toUpperCase()} sets from TCGdex...`;
-                const listResp = await fetch(`https://api.tcgdex.net/v2/${lang}/sets`);
-                if (!listResp.ok) throw new Error(`HTTP ${listResp.status}`);
-                const tcgdexList = await listResp.json();
+                // Japanese: fetch JA set list + EN set list for English name mapping
+                status.textContent = '⏳ Fetching Japanese sets from TCGdex...';
+                const [jaResp, enResp] = await Promise.all([
+                    fetch('https://api.tcgdex.net/v2/ja/sets'),
+                    fetch('https://api.tcgdex.net/v2/en/sets'),
+                ]);
+                if (!jaResp.ok) throw new Error(`JA fetch failed: HTTP ${jaResp.status}`);
+                const jaSets = await jaResp.json();
                 
-                // Fetch individual set details in batches for full info (logos, dates, series)
-                status.textContent = `⏳ Loading details for ${tcgdexList.length} sets...`;
+                // Build English name map (ID → English name) for display
+                const enNameMap = {};
+                if (enResp.ok) {
+                    const enSets = await enResp.json();
+                    for (const s of enSets) {
+                        enNameMap[s.id] = s.name;
+                    }
+                }
+                
+                // Fetch set details in batches (use EN endpoint when available for English metadata)
+                status.textContent = `⏳ Loading details for ${jaSets.length} sets...`;
                 const batchSize = 10;
-                for (let i = 0; i < tcgdexList.length; i += batchSize) {
-                    const batch = tcgdexList.slice(i, i + batchSize);
+                for (let i = 0; i < jaSets.length; i += batchSize) {
+                    const batch = jaSets.slice(i, i + batchSize);
                     const results = await Promise.allSettled(
-                        batch.map(s => fetch(`https://api.tcgdex.net/v2/${lang}/sets/${s.id}`).then(r => r.ok ? r.json() : null))
+                        batch.map(s => {
+                            // Try EN endpoint first for English metadata, fall back to JA
+                            const url = enNameMap[s.id]
+                                ? `https://api.tcgdex.net/v2/en/sets/${s.id}`
+                                : `https://api.tcgdex.net/v2/ja/sets/${s.id}`;
+                            return fetch(url).then(r => r.ok ? r.json() : null);
+                        })
                     );
                     for (let j = 0; j < results.length; j++) {
                         const detail = results[j].status === 'fulfilled' ? results[j].value : null;
                         const listItem = batch[j];
+                        const englishName = enNameMap[listItem.id];
                         allSets.push({
                             id: listItem.id,
-                            name: detail?.name || listItem.name,
+                            name: englishName || detail?.name || listItem.name,
                             series: detail?.serie?.name || '',
                             releaseDate: detail?.releaseDate || '',
                             total: detail?.cardCount?.total || listItem.cardCount?.total || 0,
@@ -3005,10 +3024,11 @@ class App {
                             },
                             legalities: detail?.legal || null,
                             _source: 'tcgdex',
-                            _lang: lang,
+                            _lang: 'ja',
+                            _jaName: listItem.name, // preserve original JA name
                         });
                     }
-                    status.textContent = `⏳ Loaded ${allSets.length}/${tcgdexList.length} sets...`;
+                    status.textContent = `⏳ Loaded ${allSets.length}/${jaSets.length} sets...`;
                 }
             }
             
