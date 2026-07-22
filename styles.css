@@ -1057,8 +1057,12 @@ main {
 }
 
 /* Value stat card */
+.stat-card.value {
+    grid-column: span 2;
+}
 .stat-card.value .stat-value {
     color: var(--accent-orange);
+    font-size: 44px;
 }
 
 /* Fetch prices button in set view */
