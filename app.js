@@ -1305,6 +1305,33 @@ class App {
         document.getElementById('back-btn').addEventListener('click', () => this.showView('dashboard'));
         document.getElementById('stats-back-btn').addEventListener('click', () => this.showView('dashboard'));
         document.getElementById('import-back-btn').addEventListener('click', () => this.showView('dashboard'));
+        document.getElementById('binder-back-btn').addEventListener('click', () => this.showView('dashboard'));
+
+        // Binder search
+        let binderSearchTimeout;
+        document.getElementById('binder-search-input').addEventListener('input', (e) => {
+            clearTimeout(binderSearchTimeout);
+            const q = e.target.value.trim();
+            if (q.length < 2) {
+                document.getElementById('binder-search-results').innerHTML = '';
+                document.getElementById('binder-search-status').textContent = '';
+                return;
+            }
+            document.getElementById('binder-search-status').textContent = '⏳';
+            binderSearchTimeout = setTimeout(() => this.searchBinderCards(q), 400);
+        });
+
+        // Binder add form
+        document.getElementById('binder-add-btn').addEventListener('click', () => this.confirmAddToBinder());
+        document.getElementById('binder-add-cancel').addEventListener('click', () => {
+            document.getElementById('binder-add-form').style.display = 'none';
+            this._binderSelectedCard = null;
+            document.querySelectorAll('.binder-result-card.selected').forEach(c => c.classList.remove('selected'));
+        });
+
+        // Binder filter & sort
+        document.getElementById('binder-filter').addEventListener('input', () => this.renderBinder());
+        document.getElementById('binder-sort').addEventListener('change', () => this.renderBinder());
 
         // Delete set button
         document.getElementById('btn-delete-set').addEventListener('click', () => {
@@ -1850,6 +1877,9 @@ class App {
             if (!this._apiSetsCache) {
                 this.fetchApiSets();
             }
+        } else if (view === 'binder') {
+            document.getElementById('binder-view').classList.add('active');
+            this.renderBinder();
         }
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2877,7 +2907,15 @@ class App {
     }
 
     handleExport() {
-        const data = this.store.exportData();
+        const collectionData = JSON.parse(this.store.exportData());
+        const binderData = this.loadBinder();
+        const backup = {
+            collection: collectionData,
+            binder: binderData,
+            exportedAt: new Date().toISOString(),
+            version: 2
+        };
+        const data = JSON.stringify(backup, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -2895,7 +2933,17 @@ class App {
         reader.onload = (ev) => {
             try {
                 const data = JSON.parse(ev.target.result);
-                if (data.generations) {
+                // Support v2 format (wrapper with collection + binder)
+                if (data.version === 2 && data.collection) {
+                    this.store.importData(data.collection);
+                    if (Array.isArray(data.binder)) {
+                        this.saveBinder(data.binder);
+                    }
+                    this.renderDashboard();
+                    this.showView('dashboard');
+                    this.showToast('✅ Collection & Binder imported successfully!', 'success');
+                } else if (data.generations) {
+                    // Legacy v1 format (raw collection data)
                     this.store.importData(data);
                     this.renderDashboard();
                     this.showView('dashboard');
@@ -2911,10 +2959,11 @@ class App {
     }
 
     handleReset() {
-        if (confirm('Are you sure? This will reset ALL your collection data!')) {
+        if (confirm('Are you sure? This will reset ALL your collection data and binder!')) {
             this.store.reset();
+            localStorage.removeItem('pokemon_tcg_binder');
             this.renderDashboard();
-            this.showToast('Collection reset to defaults.', 'success');
+            this.showToast('Collection and Binder reset to defaults.', 'success');
         }
     }
 
@@ -3992,6 +4041,339 @@ class App {
             if (cardsStatus) cardsStatus.textContent = `❌ Error adding set: ${e.message}`;
             if (addBtn) { addBtn.disabled = false; addBtn.textContent = '➕ Add Set to Collection'; }
         }
+    }
+
+    // =============================================
+    // DUPLICATES BINDER
+    // =============================================
+
+    loadBinder() {
+        try {
+            const saved = localStorage.getItem('pokemon_tcg_binder');
+            return saved ? JSON.parse(saved) : [];
+        } catch (e) {
+            console.warn('Failed to load binder:', e);
+            return [];
+        }
+    }
+
+    saveBinder(cards) {
+        try {
+            localStorage.setItem('pokemon_tcg_binder', JSON.stringify(cards));
+        } catch (e) {
+            console.warn('Failed to save binder:', e);
+        }
+    }
+
+    async searchBinderCards(query) {
+        const resultsContainer = document.getElementById('binder-search-results');
+        const status = document.getElementById('binder-search-status');
+
+        try {
+            // Use pokemontcg.io name search with select for efficiency
+            const cleanQ = query.replace(/"/g, '');
+            const url = `https://api.pokemontcg.io/v2/cards?q=name:"${encodeURIComponent(cleanQ)}"&pageSize=20&select=id,name,number,set,rarity,types,supertype,images,tcgplayer`;
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data = await resp.json();
+            const cards = data.data || [];
+
+            status.textContent = cards.length > 0 ? `${cards.length} results` : 'No results';
+
+            if (cards.length === 0) {
+                resultsContainer.innerHTML = '<p style="color:var(--text-muted);padding:16px;text-align:center">No cards found. Try a different search term.</p>';
+                return;
+            }
+
+            resultsContainer.innerHTML = cards.map((c, i) => {
+                const price = this._getApiCardMarketPrice(c);
+                const priceStr = price > 0 ? `$${price.toFixed(2)}` : '';
+                const types = (c.types || []).join(', ') || c.supertype || '';
+                return `
+                    <div class="binder-result-card" data-idx="${i}">
+                        <img class="binder-result-thumb" src="${c.images?.small || ''}" alt="" loading="lazy" onerror="this.style.display='none'">
+                        <div class="binder-result-info">
+                            <h4>${this.escapeHtml(c.name)}</h4>
+                            <p class="binder-result-set">${this.escapeHtml(c.set?.name || '—')} · #${c.number || '?'}</p>
+                            <div class="binder-result-meta">
+                                <span>${this.escapeHtml(c.rarity || '—')}</span>
+                                ${types ? `<span>${this.escapeHtml(types)}</span>` : ''}
+                                ${priceStr ? `<span class="binder-result-price">${priceStr}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Cache results for selection
+            this._binderSearchResults = cards;
+
+            // Click handlers
+            resultsContainer.querySelectorAll('.binder-result-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const idx = parseInt(card.dataset.idx);
+                    this.selectBinderCard(this._binderSearchResults[idx]);
+                    resultsContainer.querySelectorAll('.binder-result-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                });
+            });
+
+        } catch (e) {
+            status.textContent = '❌ Error';
+            console.error('Binder search error:', e);
+            resultsContainer.innerHTML = `<p style="color:var(--accent-red);padding:16px">Search failed: ${e.message}</p>`;
+        }
+    }
+
+    _getApiCardMarketPrice(apiCard) {
+        if (!apiCard.tcgplayer?.prices) return 0;
+        const prices = apiCard.tcgplayer.prices;
+        // Try common variant keys for market price
+        for (const key of ['holofoil', 'reverseHolofoil', 'normal', '1stEditionHolofoil', '1stEditionNormal', 'unlimitedHolofoil']) {
+            if (prices[key]?.market) return prices[key].market;
+        }
+        // Fallback: first variant with a market price
+        for (const key of Object.keys(prices)) {
+            if (prices[key]?.market) return prices[key].market;
+        }
+        return 0;
+    }
+
+    selectBinderCard(apiCard) {
+        this._binderSelectedCard = apiCard;
+        const form = document.getElementById('binder-add-form');
+        form.style.display = 'block';
+
+        document.getElementById('binder-add-img').src = apiCard.images?.small || '';
+        document.getElementById('binder-add-name').textContent = apiCard.name;
+        document.getElementById('binder-add-set').textContent = `${apiCard.set?.name || '—'} · #${apiCard.number || '?'}`;
+
+        const price = this._getApiCardMarketPrice(apiCard);
+        const meta = [
+            apiCard.rarity || '',
+            (apiCard.types || []).join(', '),
+            price > 0 ? `Market: $${price.toFixed(2)}` : ''
+        ].filter(Boolean).join(' · ');
+        document.getElementById('binder-add-meta').textContent = meta;
+
+        // Reset form fields
+        document.getElementById('binder-add-qty').value = 1;
+        document.getElementById('binder-add-condition').value = 'NM';
+        document.getElementById('binder-add-price').value = '';
+        document.getElementById('binder-add-notes').value = '';
+
+        // Scroll to form
+        form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    confirmAddToBinder() {
+        const apiCard = this._binderSelectedCard;
+        if (!apiCard) return;
+
+        const qty = parseInt(document.getElementById('binder-add-qty').value) || 1;
+        const condition = document.getElementById('binder-add-condition').value;
+        const pricePaid = parseFloat(document.getElementById('binder-add-price').value) || 0;
+        const notes = document.getElementById('binder-add-notes').value.trim();
+
+        const entry = {
+            id: apiCard.id,
+            name: apiCard.name,
+            set: apiCard.set?.name || '',
+            setId: apiCard.set?.id || '',
+            number: apiCard.number || '',
+            rarity: apiCard.rarity || '',
+            type: (apiCard.types || []).join(', ') || apiCard.supertype || '',
+            imageUrl: apiCard.images?.small || '',
+            marketPrice: this._getApiCardMarketPrice(apiCard),
+            quantity: qty,
+            condition: condition,
+            pricePaid: pricePaid,
+            notes: notes,
+            addedAt: new Date().toISOString()
+        };
+
+        const binder = this.loadBinder();
+        binder.push(entry);
+        this.saveBinder(binder);
+
+        // Reset UI
+        document.getElementById('binder-add-form').style.display = 'none';
+        document.getElementById('binder-search-input').value = '';
+        document.getElementById('binder-search-results').innerHTML = '';
+        document.getElementById('binder-search-status').textContent = '';
+        this._binderSelectedCard = null;
+
+        this.showToast(`Added ${apiCard.name} to Binder!`, 'success');
+        this.renderBinder();
+    }
+
+    renderBinder() {
+        const binder = this.loadBinder();
+        const statsEl = document.getElementById('binder-stats');
+        const controlsEl = document.getElementById('binder-controls');
+        const tableEl = document.getElementById('binder-table-wrapper');
+
+        // Stats
+        const totalCards = binder.reduce((sum, c) => sum + (c.quantity || 1), 0);
+        const uniqueCards = binder.length;
+        const totalValue = binder.reduce((sum, c) => sum + (c.marketPrice || 0) * (c.quantity || 1), 0);
+        const totalPaid = binder.reduce((sum, c) => sum + (c.pricePaid || 0), 0);
+
+        statsEl.innerHTML = `
+            <div class="binder-stat-card">
+                <div class="binder-stat-value" style="color:var(--text-primary)">${totalCards.toLocaleString()}</div>
+                <div class="binder-stat-label">Total Cards</div>
+            </div>
+            <div class="binder-stat-card">
+                <div class="binder-stat-value" style="color:var(--accent-blue)">${uniqueCards.toLocaleString()}</div>
+                <div class="binder-stat-label">Unique Entries</div>
+            </div>
+            <div class="binder-stat-card">
+                <div class="binder-stat-value" style="color:var(--accent-green)">$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                <div class="binder-stat-label">Market Value</div>
+            </div>
+            <div class="binder-stat-card">
+                <div class="binder-stat-value" style="color:var(--accent-orange)">$${totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                <div class="binder-stat-label">Total Paid</div>
+            </div>
+        `;
+
+        if (binder.length === 0) {
+            controlsEl.style.display = 'none';
+            tableEl.innerHTML = `
+                <div class="binder-empty">
+                    <h3>No cards in your binder yet</h3>
+                    <p>Search for a card above to start tracking your duplicates, trade stock, and extras.</p>
+                </div>
+            `;
+            return;
+        }
+
+        controlsEl.style.display = 'flex';
+
+        // Filter
+        const filterQuery = (document.getElementById('binder-filter').value || '').toLowerCase();
+        let filtered = binder.map((c, i) => ({ ...c, _idx: i }));
+        if (filterQuery.length >= 2) {
+            filtered = filtered.filter(c =>
+                c.name.toLowerCase().includes(filterQuery) ||
+                c.set.toLowerCase().includes(filterQuery) ||
+                (c.rarity || '').toLowerCase().includes(filterQuery) ||
+                (c.notes || '').toLowerCase().includes(filterQuery)
+            );
+        }
+
+        // Sort
+        const sortVal = document.getElementById('binder-sort').value;
+        filtered.sort((a, b) => {
+            switch (sortVal) {
+                case 'added-asc': return new Date(a.addedAt) - new Date(b.addedAt);
+                case 'name-asc': return a.name.localeCompare(b.name);
+                case 'name-desc': return b.name.localeCompare(a.name);
+                case 'value-desc': return (b.marketPrice || 0) - (a.marketPrice || 0);
+                case 'value-asc': return (a.marketPrice || 0) - (b.marketPrice || 0);
+                case 'set-asc': return a.set.localeCompare(b.set);
+                default: return new Date(b.addedAt) - new Date(a.addedAt); // added-desc
+            }
+        });
+
+        const conditions = ['NM', 'LP', 'MP', 'HP', 'DMG'];
+
+        tableEl.innerHTML = `
+            <table class="binder-table">
+                <thead>
+                    <tr>
+                        <th style="width:50px"></th>
+                        <th>Card</th>
+                        <th>Set</th>
+                        <th>Rarity</th>
+                        <th>Type</th>
+                        <th>Qty</th>
+                        <th>Condition</th>
+                        <th>Paid</th>
+                        <th>Market</th>
+                        <th>Notes</th>
+                        <th style="width:40px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filtered.map(c => `
+                        <tr data-binder-idx="${c._idx}">
+                            <td><img class="binder-card-thumb" src="${c.imageUrl || ''}" alt="" loading="lazy" onerror="this.style.display='none'"></td>
+                            <td style="font-weight:600;white-space:nowrap">${this.escapeHtml(c.name)}<br><span style="font-weight:400;color:var(--text-muted);font-size:11px">#${c.number}</span></td>
+                            <td style="font-size:12px;color:var(--text-secondary)">${this.escapeHtml(c.set)}</td>
+                            <td style="font-size:12px">${this.escapeHtml(c.rarity || '—')}</td>
+                            <td style="font-size:12px">${this.escapeHtml(c.type || '—')}</td>
+                            <td><input type="number" class="binder-inline-input" data-field="quantity" value="${c.quantity || 1}" min="1" max="999"></td>
+                            <td><select class="binder-inline-select" data-field="condition">${conditions.map(k => `<option value="${k}" ${c.condition === k ? 'selected' : ''}>${k}</option>`).join('')}</select></td>
+                            <td><input type="number" class="binder-inline-input" data-field="pricePaid" value="${c.pricePaid || ''}" min="0" step="0.01" style="width:65px" placeholder="$"></td>
+                            <td style="color:var(--accent-green);font-weight:600">${c.marketPrice > 0 ? '$' + c.marketPrice.toFixed(2) : '—'}</td>
+                            <td><input type="text" class="binder-inline-text" data-field="notes" value="${this.escapeHtml(c.notes || '')}" placeholder="..."></td>
+                            <td><button class="binder-delete-btn" title="Remove">✕</button></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+
+        // Inline edit handlers
+        tableEl.querySelectorAll('.binder-inline-input, .binder-inline-select, .binder-inline-text').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const row = e.target.closest('tr');
+                const idx = parseInt(row.dataset.binderIdx);
+                const field = e.target.dataset.field;
+                const binder = this.loadBinder();
+                if (!binder[idx]) return;
+
+                if (field === 'quantity') {
+                    binder[idx].quantity = Math.max(1, parseInt(e.target.value) || 1);
+                } else if (field === 'pricePaid') {
+                    binder[idx].pricePaid = parseFloat(e.target.value) || 0;
+                } else if (field === 'condition') {
+                    binder[idx].condition = e.target.value;
+                } else if (field === 'notes') {
+                    binder[idx].notes = e.target.value;
+                }
+                this.saveBinder(binder);
+                // Update stats without full re-render to keep focus
+                this.updateBinderStats(binder);
+            });
+        });
+
+        // Delete handlers
+        tableEl.querySelectorAll('.binder-delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const row = e.target.closest('tr');
+                const idx = parseInt(row.dataset.binderIdx);
+                this.deleteBinderCard(idx);
+            });
+        });
+    }
+
+    updateBinderStats(binder) {
+        const statsEl = document.getElementById('binder-stats');
+        const totalCards = binder.reduce((sum, c) => sum + (c.quantity || 1), 0);
+        const uniqueCards = binder.length;
+        const totalValue = binder.reduce((sum, c) => sum + (c.marketPrice || 0) * (c.quantity || 1), 0);
+        const totalPaid = binder.reduce((sum, c) => sum + (c.pricePaid || 0), 0);
+
+        const cards = statsEl.querySelectorAll('.binder-stat-value');
+        if (cards.length >= 4) {
+            cards[0].textContent = totalCards.toLocaleString();
+            cards[1].textContent = uniqueCards.toLocaleString();
+            cards[2].textContent = '$' + totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            cards[3].textContent = '$' + totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+    }
+
+    deleteBinderCard(idx) {
+        const binder = this.loadBinder();
+        if (idx < 0 || idx >= binder.length) return;
+        const name = binder[idx].name;
+        binder.splice(idx, 1);
+        this.saveBinder(binder);
+        this.showToast(`Removed ${name} from Binder`, 'success');
+        this.renderBinder();
     }
 }
 

@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=116">
+    <link rel="stylesheet" href="styles.css?v=117">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎴</text></svg>">
 </head>
 <body>
@@ -20,6 +20,7 @@
             </div>
             <div class="nav-links">
                 <a class="nav-link active" data-view="dashboard">Collection</a>
+                <a class="nav-link" data-view="binder">Binder</a>
                 <a class="nav-link" data-view="stats">Statistics</a>
                 <a class="nav-link" data-view="api-explorer">Explorer</a>
                 <a class="nav-link" data-view="import">Import</a>
@@ -273,11 +274,88 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Binder View -->
+            <section id="binder-view" class="view">
+                <button id="binder-back-btn" class="back-btn">← Back to Dashboard</button>
+                <h2 class="section-title">Duplicates Binder</h2>
+                <p class="section-subtitle">Track your duplicate cards, trade stock, and extras — separate from your main collection.</p>
+
+                <!-- Binder Search -->
+                <div class="binder-search-section">
+                    <div class="binder-search-bar">
+                        <input type="text" id="binder-search-input" placeholder="Search for a card to add (e.g. Charizard, Pikachu VMAX)..." autocomplete="off">
+                        <span id="binder-search-status" class="binder-search-status"></span>
+                    </div>
+                    <div id="binder-search-results" class="binder-search-results"></div>
+                </div>
+
+                <!-- Add to Binder Form (hidden until card selected) -->
+                <div id="binder-add-form" class="binder-add-form" style="display:none">
+                    <div class="binder-add-form-header">
+                        <img id="binder-add-img" class="binder-add-thumb" src="" alt="">
+                        <div class="binder-add-info">
+                            <h3 id="binder-add-name"></h3>
+                            <p id="binder-add-set" style="color:var(--text-secondary);font-size:13px"></p>
+                            <p id="binder-add-meta" style="color:var(--text-muted);font-size:12px"></p>
+                        </div>
+                    </div>
+                    <div class="binder-add-fields">
+                        <div class="binder-field">
+                            <label>Quantity</label>
+                            <input type="number" id="binder-add-qty" value="1" min="1" max="999">
+                        </div>
+                        <div class="binder-field">
+                            <label>Condition</label>
+                            <select id="binder-add-condition">
+                                <option value="NM">Near Mint (NM)</option>
+                                <option value="LP">Lightly Played (LP)</option>
+                                <option value="MP">Moderately Played (MP)</option>
+                                <option value="HP">Heavily Played (HP)</option>
+                                <option value="DMG">Damaged (DMG)</option>
+                            </select>
+                        </div>
+                        <div class="binder-field">
+                            <label>Price Paid ($)</label>
+                            <input type="number" id="binder-add-price" placeholder="0.00" min="0" step="0.01">
+                        </div>
+                        <div class="binder-field" style="flex:2;min-width:200px">
+                            <label>Notes</label>
+                            <input type="text" id="binder-add-notes" placeholder="e.g. From booster pack, trade bait...">
+                        </div>
+                    </div>
+                    <div class="binder-add-actions">
+                        <button id="binder-add-btn" class="primary-btn">Add to Binder</button>
+                        <button id="binder-add-cancel" class="secondary-btn">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Binder Stats -->
+                <div id="binder-stats" class="binder-stats"></div>
+
+                <!-- Binder Controls -->
+                <div id="binder-controls" class="binder-controls" style="display:none">
+                    <input type="text" id="binder-filter" placeholder="Filter binder..." autocomplete="off">
+                    <select id="binder-sort">
+                        <option value="added-desc">Newest First</option>
+                        <option value="added-asc">Oldest First</option>
+                        <option value="name-asc">Name A → Z</option>
+                        <option value="name-desc">Name Z → A</option>
+                        <option value="value-desc">Highest Value</option>
+                        <option value="value-asc">Lowest Value</option>
+                        <option value="set-asc">Set A → Z</option>
+                    </select>
+                </div>
+
+                <!-- Binder Table -->
+                <div id="binder-table-wrapper" class="binder-table-wrapper"></div>
+            </section>
+
         </main>
     </div>
 
-    <script src="data/set_symbols.js?v=116"></script>
-    <script src="data/collection.js?v=116"></script>
-    <script src="app.js?v=116"></script>
+    <script src="data/set_symbols.js?v=117"></script>
+    <script src="data/collection.js?v=117"></script>
+    <script src="app.js?v=117"></script>
 </body>
 </html>
