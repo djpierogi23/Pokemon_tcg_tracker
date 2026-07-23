@@ -2506,7 +2506,60 @@ class App {
         const container = document.getElementById('stats-content');
         container.innerHTML = '';
 
-        // Generation completion chart
+        // Collect all card data with prices
+        const allSets = [];
+        const allCards = [];
+        const ownedCards = [];
+        const pricedCards = [];
+        const rarityMap = {};
+        const typeMap = {};
+        const conditionMap = {};
+        let totalPaid = 0;
+        let totalMarketValue = 0;
+        let totalCards = 0;
+        let totalOwned = 0;
+
+        for (const gen of this.store.getGenerations()) {
+            for (const set of gen.sets) {
+                const totals = this.store.getSetTotals(set);
+                let setValue = 0;
+                for (const card of set.cards) {
+                    totalCards++;
+                    allCards.push({ card, set, gen });
+
+                    // Rarity tracking (all cards)
+                    const rarity = card.rarity || 'Unknown';
+                    rarityMap[rarity] = (rarityMap[rarity] || 0) + 1;
+
+                    if (card.status === 'HAVE') {
+                        totalOwned++;
+                        ownedCards.push({ card, set, gen });
+
+                        // Type tracking (owned)
+                        const type = card.type || 'Unknown';
+                        typeMap[type] = (typeMap[type] || 0) + 1;
+
+                        // Condition tracking (owned)
+                        const cond = card.condition || 'NM';
+                        conditionMap[cond] = (conditionMap[cond] || 0) + 1;
+
+                        // Price tracking
+                        const val = this.getCardValue(card, set.name);
+                        if (val > 0) {
+                            pricedCards.push({ card, set, gen, value: val });
+                            setValue += val;
+                            totalMarketValue += val;
+                        }
+                        if (card.pricePaid != null && card.pricePaid > 0) {
+                            totalPaid += card.pricePaid;
+                        }
+                    }
+                }
+                allSets.push({ ...totals, name: set.name, genId: gen.id, setValue, set, gen });
+            }
+        }
+
+        // ─── 1. Generation Completion ───
         const genCard = document.createElement('div');
         genCard.className = 'stats-card';
         genCard.style.gridColumn = 'span 2';
@@ -2516,7 +2569,7 @@ class App {
         const genChart = genCard.querySelector('#gen-chart');
         for (const gen of this.store.getGenerations()) {
             const totals = this.store.getGenTotals(gen);
-            const color = GEN_COLORS[gen.id] || '#3498db';
+            const color = GEN_COLORS[gen.id] || 'var(--accent-blue)';
             genChart.innerHTML += `
                 <div class="bar-item">
                     <span class="bar-label">${gen.id.replace('gen', 'Gen ')}</span>
@@ -2528,21 +2581,119 @@ class App {
             `;
         }
 
-        // Top completed sets
-        const allSets = [];
-        for (const gen of this.store.getGenerations()) {
-            for (const set of gen.sets) {
-                const totals = this.store.getSetTotals(set);
-                allSets.push({ ...totals, name: set.name, genId: gen.id });
-            }
+        // ─── 2. Most Valuable Cards (Top 15) ───
+        const sortedByValue = [...pricedCards].sort((a, b) => b.value - a.value);
+        const topCards = sortedByValue.slice(0, 15);
+        if (topCards.length > 0) {
+            const mvCard = document.createElement('div');
+            mvCard.className = 'stats-card';
+            mvCard.style.gridColumn = 'span 2';
+            mvCard.innerHTML = `
+                <h3>Most Valuable Cards</h3>
+                <div class="stats-table-wrapper">
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th style="width:30px">#</th>
+                                <th>Card</th>
+                                <th>Set</th>
+                                <th>Rarity</th>
+                                <th style="text-align:right">Market Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${topCards.map((c, i) => `
+                                <tr>
+                                    <td style="color:var(--text-muted)">${i + 1}</td>
+                                    <td style="font-weight:600">${this.escapeHtml(c.card.name)}</td>
+                                    <td style="color:var(--text-secondary);font-size:12px">${this.escapeHtml(c.set.name)}</td>
+                                    <td><span class="rarity-badge" style="font-size:11px">${this.escapeHtml(c.card.rarity || '—')}</span></td>
+                                    <td style="text-align:right;font-weight:700;color:var(--accent-green)">$${c.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            container.appendChild(mvCard);
         }
 
+        // ─── 3. Most Valuable Sets (Top 10) ───
+        const topSets = [...allSets].filter(s => s.setValue > 0).sort((a, b) => b.setValue - a.setValue).slice(0, 10);
+        if (topSets.length > 0) {
+            const vsCard = document.createElement('div');
+            vsCard.className = 'stats-card';
+            vsCard.innerHTML = `
+                <h3>Most Valuable Sets</h3>
+                <div class="bar-chart">
+                    ${topSets.map(s => {
+                        const maxVal = topSets[0].setValue;
+                        const pct = maxVal > 0 ? (s.setValue / maxVal * 100) : 0;
+                        return `
+                            <div class="bar-item">
+                                <span class="bar-label" style="width:140px;font-size:11px">${s.name.substring(0, 20)}</span>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width:${pct}%;background:var(--accent-green)"></div>
+                                </div>
+                                <span class="bar-value" style="color:var(--accent-green);width:70px">$${s.setValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            container.appendChild(vsCard);
+        }
+
+        // ─── 4. Collection Value Summary ───
+        const valueSummaryCard = document.createElement('div');
+        valueSummaryCard.className = 'stats-card';
+        const paidVsMarket = totalPaid > 0 && totalMarketValue > 0 ? ((totalMarketValue - totalPaid) / totalPaid * 100) : 0;
+        const roiColor = paidVsMarket >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+        const roiSign = paidVsMarket >= 0 ? '+' : '';
+        valueSummaryCard.innerHTML = `
+            <h3>Value Summary</h3>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div style="text-align:center;padding:16px 0;">
+                    <div style="font-size:36px;font-weight:700;color:var(--accent-green)">$${totalMarketValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Total Market Value</div>
+                </div>
+                ${totalPaid > 0 ? `
+                    <div style="display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border-color)">
+                        <span style="color:var(--text-secondary)">Total Paid</span>
+                        <span style="font-weight:700">$${totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between">
+                        <span style="color:var(--text-secondary)">ROI</span>
+                        <span style="font-weight:700;color:${roiColor}">${roiSign}${paidVsMarket.toFixed(1)}%</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between">
+                        <span style="color:var(--text-secondary)">Unrealized Gain/Loss</span>
+                        <span style="font-weight:700;color:${roiColor}">${roiSign}$${Math.abs(totalMarketValue - totalPaid).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+                ` : ''}
+                <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border-color)">
+                    <span style="color:var(--text-secondary)">Avg Card Value</span>
+                    <span style="font-weight:700">${pricedCards.length > 0 ? '$' + (totalMarketValue / pricedCards.length).toFixed(2) : '—'}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                    <span style="color:var(--text-secondary)">Median Card Value</span>
+                    <span style="font-weight:700">${pricedCards.length > 0 ? '$' + sortedByValue[Math.floor(sortedByValue.length / 2)].value.toFixed(2) : '—'}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                    <span style="color:var(--text-secondary)">Cards Priced</span>
+                    <span style="font-weight:700">${pricedCards.length.toLocaleString()} / ${totalOwned.toLocaleString()}</span>
+                </div>
+            </div>
+        `;
+        container.appendChild(valueSummaryCard);
+
+        // ─── 5. Top Completed Sets ───
         const topComplete = allSets.filter(s => s.owned > 0).sort((a, b) => parseFloat(b.percent) - parseFloat(a.percent)).slice(0, 10);
-        const topCard = document.createElement('div');
-        topCard.className = 'stats-card';
-        topCard.innerHTML = `<h3>Most Complete Sets</h3><div class="bar-chart">${
+        const topCompleteCard = document.createElement('div');
+        topCompleteCard.className = 'stats-card';
+        topCompleteCard.innerHTML = `<h3>Most Complete Sets</h3><div class="bar-chart">${
             topComplete.map(s => {
-                const color = parseFloat(s.percent) >= 100 ? '#27ae60' : '#3498db';
+                const color = parseFloat(s.percent) >= 100 ? 'var(--accent-green)' : 'var(--accent-blue)';
                 return `
                     <div class="bar-item">
                         <span class="bar-label" style="width:140px;font-size:11px">${s.name.substring(0, 20)}</span>
@@ -2554,9 +2705,9 @@ class App {
                 `;
             }).join('')
         }</div>`;
-        container.appendChild(topCard);
+        container.appendChild(topCompleteCard);
 
-        // Least complete sets (with progress)
+        // ─── 6. Needs Most Work ───
         const leastComplete = allSets.filter(s => s.owned > 0 && parseFloat(s.percent) < 100).sort((a, b) => parseFloat(a.percent) - parseFloat(b.percent)).slice(0, 10);
         const leastCard = document.createElement('div');
         leastCard.className = 'stats-card';
@@ -2565,35 +2716,156 @@ class App {
                 <div class="bar-item">
                     <span class="bar-label" style="width:140px;font-size:11px">${s.name.substring(0, 20)}</span>
                     <div class="bar-track">
-                        <div class="bar-fill" style="width:${Math.min(s.percent, 100)}%;background:#e74c3c"></div>
+                        <div class="bar-fill" style="width:${Math.min(s.percent, 100)}%;background:var(--accent-red)"></div>
                     </div>
-                    <span class="bar-value" style="color:#e74c3c">${s.percent}%</span>
+                    <span class="bar-value" style="color:var(--accent-red)">${s.percent}%</span>
                 </div>
             `).join('')
         }</div>`;
         container.appendChild(leastCard);
 
-        // Quick stats
+        // ─── 7. Rarity Distribution ───
+        const rarityEntries = Object.entries(rarityMap).sort((a, b) => b[1] - a[1]);
+        const maxRarity = rarityEntries.length > 0 ? rarityEntries[0][1] : 1;
+        const rarityCard = document.createElement('div');
+        rarityCard.className = 'stats-card';
+        rarityCard.innerHTML = `
+            <h3>Rarity Distribution</h3>
+            <div class="bar-chart">
+                ${rarityEntries.slice(0, 12).map(([r, count]) => `
+                    <div class="bar-item">
+                        <span class="bar-label" style="width:140px;font-size:11px">${r}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:${count / maxRarity * 100}%;background:var(--accent-purple)"></div>
+                        </div>
+                        <span class="bar-value" style="color:var(--accent-purple)">${count.toLocaleString()}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        container.appendChild(rarityCard);
+
+        // ─── 8. Type Distribution (Owned Cards) ───
+        const typeEntries = Object.entries(typeMap).sort((a, b) => b[1] - a[1]);
+        const maxType = typeEntries.length > 0 ? typeEntries[0][1] : 1;
+        const typeCard = document.createElement('div');
+        typeCard.className = 'stats-card';
+        const typeColorMap = {
+            'Fire': 'var(--type-fire)', 'Water': 'var(--type-water)', 'Grass': 'var(--type-grass)',
+            'Lightning': 'var(--type-lightning)', 'Psychic': 'var(--type-psychic)', 'Fighting': 'var(--type-fighting)',
+            'Colorless': 'var(--type-colorless)', 'Metal': 'var(--type-metal)', 'Darkness': 'var(--type-darkness)',
+            'Fairy': 'var(--type-fairy)', 'Dragon': 'var(--type-dragon)', 'Trainer': 'var(--type-trainer)',
+            'Energy': 'var(--type-energy)', 'Supporter': 'var(--type-supporter)'
+        };
+        typeCard.innerHTML = `
+            <h3>Type Distribution</h3>
+            <div class="bar-chart">
+                ${typeEntries.map(([t, count]) => {
+                    const color = typeColorMap[t] || 'var(--text-secondary)';
+                    return `
+                        <div class="bar-item">
+                            <span class="bar-label" style="width:100px;font-size:11px">${t}</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:${count / maxType * 100}%;background:${color}"></div>
+                            </div>
+                            <span class="bar-value" style="color:${color}">${count.toLocaleString()}</span>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+        container.appendChild(typeCard);
+
+        // ─── 9. Condition Breakdown ───
+        const conditionOrder = ['NM', 'LP', 'MP', 'HP', 'DMG'];
+        const conditionLabels = { 'NM': 'Near Mint', 'LP': 'Lightly Played', 'MP': 'Moderately Played', 'HP': 'Heavily Played', 'DMG': 'Damaged' };
+        const conditionColors = { 'NM': 'var(--accent-green)', 'LP': 'var(--accent-blue)', 'MP': 'var(--accent-orange)', 'HP': 'var(--accent-red)', 'DMG': '#ff375f' };
+        const condCard = document.createElement('div');
+        condCard.className = 'stats-card';
+        condCard.innerHTML = `
+            <h3>Condition Breakdown</h3>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                ${conditionOrder.filter(c => conditionMap[c]).map(c => {
+                    const count = conditionMap[c];
+                    const pct = totalOwned > 0 ? (count / totalOwned * 100) : 0;
+                    const color = conditionColors[c];
+                    return `
+                        <div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                                <span style="font-size:13px;font-weight:500">${conditionLabels[c]} <span style="color:var(--text-muted)">(${c})</span></span>
+                                <span style="font-size:13px;font-weight:600;color:${color}">${count.toLocaleString()} <span style="color:var(--text-muted)">(${pct.toFixed(1)}%)</span></span>
+                            </div>
+                            <div class="bar-track" style="height:6px">
+                                <div class="bar-fill" style="width:${pct}%;background:${color}"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+        container.appendChild(condCard);
+
+        // ─── 10. Quick Stats ───
         const quickCard = document.createElement('div');
         quickCard.className = 'stats-card';
         const grandTotals = this.store.getGrandTotals();
         const completeSets = allSets.filter(s => parseFloat(s.percent) >= 100).length;
         const inProgressSets = allSets.filter(s => s.owned > 0 && parseFloat(s.percent) < 100).length;
         const notStartedSets = allSets.filter(s => s.owned === 0).length;
+        const totalGens = this.store.getGenerations().length;
+
+        // Find largest set
+        const largestSet = allSets.reduce((a, b) => a.total > b.total ? a : b, allSets[0] || { name: '—', total: 0 });
+        // Find most owned single set
+        const mostOwnedSet = allSets.reduce((a, b) => a.owned > b.owned ? a : b, allSets[0] || { name: '—', owned: 0 });
+
         quickCard.innerHTML = `
-            <h3>Quick Stats</h3>
+            <h3>Overview</h3>
             <div style="display:flex;flex-direction:column;gap:12px;">
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary)">Generations</span><span style="font-weight:700">${totalGens}</span></div>
                 <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary)">Total Sets</span><span style="font-weight:700">${allSets.length}</span></div>
-                <div style="display:flex;justify-content:space-between;"><span style="color:#27ae60">✅ Complete</span><span style="font-weight:700;color:#27ae60">${completeSets}</span></div>
-                <div style="display:flex;justify-content:space-between;"><span style="color:#3498db">🔵 In Progress</span><span style="font-weight:700;color:#3498db">${inProgressSets}</span></div>
-                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted)">⬜ Not Started</span><span style="font-weight:700;color:var(--text-muted)">${notStartedSets}</span></div>
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--accent-green)">Complete</span><span style="font-weight:700;color:var(--accent-green)">${completeSets}</span></div>
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--accent-blue)">In Progress</span><span style="font-weight:700;color:var(--accent-blue)">${inProgressSets}</span></div>
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted)">Not Started</span><span style="font-weight:700;color:var(--text-muted)">${notStartedSets}</span></div>
                 <hr style="border:none;border-top:1px solid var(--border-color)">
                 <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary)">Unique Cards</span><span style="font-weight:700">${grandTotals.total.toLocaleString()}</span></div>
-                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary)">Cards Owned</span><span style="font-weight:700;color:#27ae60">${grandTotals.owned.toLocaleString()}</span></div>
-                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary)">Cards Needed</span><span style="font-weight:700;color:#e74c3c">${grandTotals.need.toLocaleString()}</span></div>
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary)">Cards Owned</span><span style="font-weight:700;color:var(--accent-green)">${grandTotals.owned.toLocaleString()}</span></div>
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary)">Cards Needed</span><span style="font-weight:700;color:var(--accent-red)">${grandTotals.need.toLocaleString()}</span></div>
+                <hr style="border:none;border-top:1px solid var(--border-color)">
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary)">Largest Set</span><span style="font-weight:600;font-size:12px">${largestSet.name.substring(0, 22)} (${largestSet.total})</span></div>
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary)">Most Collected Set</span><span style="font-weight:600;font-size:12px">${mostOwnedSet.name.substring(0, 22)} (${mostOwnedSet.owned})</span></div>
             </div>
         `;
         container.appendChild(quickCard);
+
+        // ─── 11. Closest to Completion ───
+        const almostDone = allSets
+            .filter(s => s.owned > 0 && parseFloat(s.percent) < 100 && parseFloat(s.percent) >= 70)
+            .sort((a, b) => parseFloat(b.percent) - parseFloat(a.percent))
+            .slice(0, 8);
+        if (almostDone.length > 0) {
+            const almostCard = document.createElement('div');
+            almostCard.className = 'stats-card';
+            almostCard.innerHTML = `
+                <h3>Almost Complete</h3>
+                <p style="color:var(--text-secondary);font-size:12px;margin-bottom:12px">Sets that are 70%+ complete — so close!</p>
+                <div class="bar-chart">
+                    ${almostDone.map(s => {
+                        const need = s.total - s.owned;
+                        return `
+                            <div class="bar-item">
+                                <span class="bar-label" style="width:140px;font-size:11px">${s.name.substring(0, 20)}</span>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width:${Math.min(s.percent, 100)}%;background:var(--accent-orange)"></div>
+                                </div>
+                                <span class="bar-value" style="color:var(--accent-orange);width:55px">${need} left</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            container.appendChild(almostCard);
+        }
     }
 
     // =============================================
