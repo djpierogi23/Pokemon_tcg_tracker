@@ -473,7 +473,7 @@ class PriceService {
     }
 
     // Extract price from pokemontcg.io card data (Phase 1 bulk fetch format)
-    extractPrice(cardData) {
+    extractPrice(cardData, edition) {
         let tcgplayerUrl = null;
 
         // Map of sub_type_name -> { market, low }
@@ -494,10 +494,30 @@ class PriceService {
                     }
                 }
             } else if (typeof prices === 'object') {
-                // Handle nested format: { holofoil: { market: x }, normal: { market: x } }
-                const nameMap = { normal: 'Normal', holofoil: 'Holofoil', reverseHolofoil: 'Reverse Holofoil', '1stEditionHolofoil': '1st Edition' };
-                for (const [key, label] of Object.entries(nameMap)) {
+                // Full nameMap of all known subtypes
+                const allSubtypes = {
+                    normal: 'Normal', holofoil: 'Holofoil',
+                    reverseHolofoil: 'Reverse Holofoil',
+                    '1stEditionHolofoil': '1st Edition Holo',
+                    '1stEditionNormal': '1st Edition',
+                };
+
+                // Determine priority order based on edition
+                let priorityKeys;
+                if (edition === '1st') {
+                    // 1st Edition: prioritize 1st Ed subtypes
+                    priorityKeys = ['1stEditionHolofoil', '1stEditionNormal', 'holofoil', 'normal', 'reverseHolofoil'];
+                } else if (edition === 'unlimited' || edition === 'shadowless') {
+                    // Unlimited/Shadowless: prioritize non-1st-edition subtypes
+                    priorityKeys = ['holofoil', 'normal', 'reverseHolofoil', '1stEditionHolofoil', '1stEditionNormal'];
+                } else {
+                    // Default: normal -> holofoil -> reverse -> 1st edition
+                    priorityKeys = ['normal', 'holofoil', 'reverseHolofoil', '1stEditionHolofoil', '1stEditionNormal'];
+                }
+
+                for (const key of priorityKeys) {
                     if (prices[key]) {
+                        const label = allSubtypes[key] || key;
                         const market = prices[key].market || prices[key].mid || null;
                         const low = prices[key].low || null;
                         if (market) {
@@ -617,15 +637,16 @@ class PriceService {
         // Returns a map of cardNumber -> priceInfo
         const priceMap = {};
         let page = 1;
+        const edition = set.edition || null;
         while (true) {
             const url = `https://api.pokemontcg.io/v2/cards?q=set.id:${set.id}&pageSize=250&page=${page}&select=name,number,tcgplayer,images`;
-            console.log(`[PriceFetch] Bulk fetch: ${url}`);
+            console.log(`[PriceFetch] Bulk fetch: ${url}` + (edition ? ` (edition: ${edition})` : ''));
             const resp = await fetch(url);
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             const data = await resp.json();
             for (const card of (data.data || [])) {
                 if (card.tcgplayer && card.tcgplayer.prices) {
-                    const priceInfo = this.extractPrice(card);
+                    const priceInfo = this.extractPrice(card, edition);
                     if (priceInfo.market) {
                         priceMap[card.number] = priceInfo;
                     }

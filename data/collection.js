@@ -1,3 +1,4 @@
+// Auto-generated from collection.json
 const COLLECTION_DATA = {
   "generations": [
     {
@@ -676,7 +677,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "40",
-              "name": "Pokémon Center",
+              "name": "Pok\u00e9mon Center",
               "type": "Trainer",
               "status": "NEED",
               "stock": 0,
@@ -710,7 +711,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "42",
-              "name": "Pokémon Tower",
+              "name": "Pok\u00e9mon Tower",
               "type": "Stadium",
               "status": "HAVE",
               "stock": 1,
@@ -1007,7 +1008,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "6/36",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -1024,7 +1025,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "7/36",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -2740,7 +2741,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "35/53",
-              "name": "Pokémon Retransfer",
+              "name": "Pok\u00e9mon Retransfer",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -2757,7 +2758,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "36/53",
-              "name": "Pokémon Tower",
+              "name": "Pok\u00e9mon Tower",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -3700,7 +3701,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "55/102",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Grass",
               "status": "HAVE",
               "stock": 3,
@@ -4057,7 +4058,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "76/102",
-              "name": "Pokémon Breeder",
+              "name": "Pok\u00e9mon Breeder",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -4074,7 +4075,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "77/102",
-              "name": "Pokémon Trader",
+              "name": "Pok\u00e9mon Trader",
               "type": "Trainer",
               "status": "NEED",
               "stock": 0,
@@ -4210,7 +4211,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "85/102",
-              "name": "Pokémon Center",
+              "name": "Pok\u00e9mon Center",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -4227,7 +4228,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "86/102",
-              "name": "Pokémon Flute",
+              "name": "Pok\u00e9mon Flute",
               "type": "Trainer",
               "status": "NEED",
               "stock": 0,
@@ -4244,7 +4245,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "87/102",
-              "name": "Pokédex",
+              "name": "Pok\u00e9dex",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -4514,7 +4515,8 @@ const COLLECTION_DATA = {
               "note": "",
               "condition": "MP"
             }
-          ]
+          ],
+          "edition": "1st"
         },
         {
           "id": "base1",
@@ -5442,7 +5444,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "55/102",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Grass",
               "status": "HAVE",
               "stock": 3,
@@ -5799,7 +5801,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "76/102",
-              "name": "Pokémon Breeder",
+              "name": "Pok\u00e9mon Breeder",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -5816,7 +5818,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "77/102",
-              "name": "Pokémon Trader",
+              "name": "Pok\u00e9mon Trader",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -5952,7 +5954,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "85/102",
-              "name": "Pokémon Center",
+              "name": "Pok\u00e9mon Center",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -5969,7 +5971,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "86/102",
-              "name": "Pokémon Flute",
+              "name": "Pok\u00e9mon Flute",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -5986,7 +5988,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "87/102",
-              "name": "Pokédex",
+              "name": "Pok\u00e9dex",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -6256,7 +6258,8 @@ const COLLECTION_DATA = {
               "note": "",
               "condition": "MP"
             }
-          ]
+          ],
+          "edition": "shadowless"
         },
         {
           "id": "base1",
@@ -7184,7 +7187,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "55/102",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Grass",
               "status": "HAVE",
               "stock": 3,
@@ -7541,7 +7544,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "76/102",
-              "name": "Pokémon Breeder",
+              "name": "Pok\u00e9mon Breeder",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -7558,7 +7561,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "77/102",
-              "name": "Pokémon Trader",
+              "name": "Pok\u00e9mon Trader",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -7694,7 +7697,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "85/102",
-              "name": "Pokémon Center",
+              "name": "Pok\u00e9mon Center",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -7711,7 +7714,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "86/102",
-              "name": "Pokémon Flute",
+              "name": "Pok\u00e9mon Flute",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -7728,7 +7731,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "87/102",
-              "name": "Pokédex",
+              "name": "Pok\u00e9dex",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 3,
@@ -7998,7 +8001,8 @@ const COLLECTION_DATA = {
               "note": "",
               "condition": "MP"
             }
-          ]
+          ],
+          "edition": "unlimited"
         },
         {
           "id": "base-set-japanese",
@@ -8076,7 +8080,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "5/102",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "",
               "status": "HAVE",
               "stock": 3,
@@ -9385,7 +9389,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "82/102",
-              "name": "Pokédex",
+              "name": "Pok\u00e9dex",
               "type": "",
               "status": "HAVE",
               "stock": 3,
@@ -9402,7 +9406,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "83/102",
-              "name": "Pokémon Center",
+              "name": "Pok\u00e9mon Center",
               "type": "",
               "status": "HAVE",
               "stock": 3,
@@ -9419,7 +9423,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "84/102",
-              "name": "Pokémon Flute",
+              "name": "Pok\u00e9mon Flute",
               "type": "",
               "status": "HAVE",
               "stock": 3,
@@ -9572,7 +9576,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "93/102",
-              "name": "Pokémon Trader",
+              "name": "Pok\u00e9mon Trader",
               "type": "",
               "status": "HAVE",
               "stock": 3,
@@ -9589,7 +9593,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "94/102",
-              "name": "Pokémon Breeder",
+              "name": "Pok\u00e9mon Breeder",
               "type": "",
               "status": "HAVE",
               "stock": 3,
@@ -10702,7 +10706,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "57/64",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "Grass",
               "status": "HAVE",
               "stock": 1,
@@ -10821,7 +10825,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "64/64",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 1,
@@ -10880,7 +10884,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "3/98",
-              "name": "Giovanni's Nidoran♀",
+              "name": "Giovanni's Nidoran\u2640",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -10897,7 +10901,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "4/98",
-              "name": "Giovanni's Nidoran♂",
+              "name": "Giovanni's Nidoran\u2642",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -14959,7 +14963,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "82/130",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "Grass",
               "status": "HAVE",
               "stock": 1,
@@ -14976,7 +14980,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "83/130",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Grass",
               "status": "HAVE",
               "stock": 1,
@@ -15350,7 +15354,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "105/130",
-              "name": "Pokémon Breeder",
+              "name": "Pok\u00e9mon Breeder",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 1,
@@ -15367,7 +15371,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "106/130",
-              "name": "Pokémon Trader",
+              "name": "Pok\u00e9mon Trader",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 1,
@@ -15503,7 +15507,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "114/130",
-              "name": "Pokémon Center",
+              "name": "Pok\u00e9mon Center",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 1,
@@ -15520,7 +15524,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "115/130",
-              "name": "Pokédex",
+              "name": "Pok\u00e9dex",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 1,
@@ -15622,7 +15626,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "121/130",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 1,
@@ -20729,7 +20733,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "75/132",
-              "name": "Giovanni's Nidoran♀",
+              "name": "Giovanni's Nidoran\u2640",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -20746,7 +20750,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "76/132",
-              "name": "Giovanni's Nidoran♂",
+              "name": "Giovanni's Nidoran\u2642",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -23100,7 +23104,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "82/110",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -23117,7 +23121,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "83/110",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -23440,7 +23444,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "165/110",
-              "name": "Pokémon Breeder",
+              "name": "Pok\u00e9mon Breeder",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -23457,7 +23461,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "103/110",
-              "name": "Pokémon Trader",
+              "name": "Pok\u00e9mon Trader",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -24883,7 +24887,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "76/96",
-              "name": "Pokémon March",
+              "name": "Pok\u00e9mon March",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -24985,7 +24989,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "82/96",
-              "name": "New Pokédex",
+              "name": "New Pok\u00e9dex",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -25172,7 +25176,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "93/96",
-              "name": "PokéGear",
+              "name": "Pok\u00e9Gear",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -26727,7 +26731,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "88/111",
-              "name": "PokéGear",
+              "name": "Pok\u00e9Gear",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -26846,7 +26850,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "95/111",
-              "name": "New Pokédex",
+              "name": "New Pok\u00e9dex",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -26965,7 +26969,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "165/111",
-              "name": "Pokémon March",
+              "name": "Pok\u00e9mon March",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -28420,7 +28424,7 @@ const COLLECTION_DATA = {
         },
         {
           "id": "vs-j",
-          "name": "Pokémon VS",
+          "name": "Pok\u00e9mon VS",
           "sheetName": "VS (J)",
           "releaseDate": "2001-07-19",
           "cards": [
@@ -30670,7 +30674,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "133/141",
-              "name": "Pokémon Reverse",
+              "name": "Pok\u00e9mon Reverse",
               "type": "",
               "status": "NEED",
               "stock": 0,
@@ -30839,7 +30843,7 @@ const COLLECTION_DATA = {
               "condition": "MP"
             },
             {
-              "number": "—",
+              "number": "\u2014",
               "name": "Grass Energy",
               "type": "",
               "status": "HAVE",
@@ -30856,7 +30860,7 @@ const COLLECTION_DATA = {
               "condition": "MP"
             },
             {
-              "number": "—",
+              "number": "\u2014",
               "name": "Fire Energy",
               "type": "",
               "status": "HAVE",
@@ -30873,7 +30877,7 @@ const COLLECTION_DATA = {
               "condition": "MP"
             },
             {
-              "number": "—",
+              "number": "\u2014",
               "name": "Water Energy",
               "type": "",
               "status": "HAVE",
@@ -30890,7 +30894,7 @@ const COLLECTION_DATA = {
               "condition": "MP"
             },
             {
-              "number": "—",
+              "number": "\u2014",
               "name": "Lightning Energy",
               "type": "",
               "status": "HAVE",
@@ -30907,7 +30911,7 @@ const COLLECTION_DATA = {
               "condition": "MP"
             },
             {
-              "number": "—",
+              "number": "\u2014",
               "name": "Psychic Energy",
               "type": "",
               "status": "HAVE",
@@ -30924,7 +30928,7 @@ const COLLECTION_DATA = {
               "condition": "MP"
             },
             {
-              "number": "—",
+              "number": "\u2014",
               "name": "Fighting Energy",
               "type": "",
               "status": "HAVE",
@@ -30941,7 +30945,7 @@ const COLLECTION_DATA = {
               "condition": "MP"
             },
             {
-              "number": "—",
+              "number": "\u2014",
               "name": "Darkness Energy",
               "type": "",
               "status": "HAVE",
@@ -30958,7 +30962,7 @@ const COLLECTION_DATA = {
               "condition": "MP"
             },
             {
-              "number": "—",
+              "number": "\u2014",
               "name": "Metal Energy",
               "type": "",
               "status": "HAVE",
@@ -30975,7 +30979,7 @@ const COLLECTION_DATA = {
               "condition": "MP"
             },
             {
-              "number": "—",
+              "number": "\u2014",
               "name": "Rainbow Energy",
               "type": "",
               "status": "HAVE",
@@ -32352,7 +32356,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "62/64",
-              "name": "Pokémon Breeder Fields",
+              "name": "Pok\u00e9mon Breeder Fields",
               "type": "Stadium",
               "status": "HAVE",
               "stock": 0,
@@ -34162,7 +34166,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "165/105",
-              "name": "Pokémon Personality Test",
+              "name": "Pok\u00e9mon Personality Test",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -36822,7 +36826,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "145/165",
-              "name": "Pokémon Nurse",
+              "name": "Pok\u00e9mon Nurse",
               "type": "Supporter",
               "status": "HAVE",
               "stock": 0,
@@ -36839,7 +36843,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "146/165",
-              "name": "Pokémon Reversal",
+              "name": "Pok\u00e9mon Reversal",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -39295,7 +39299,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "96/147",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -39890,7 +39894,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "130/147",
-              "name": "Pokémon Fan Club",
+              "name": "Pok\u00e9mon Fan Club",
               "type": "Supporter",
               "status": "HAVE",
               "stock": 0,
@@ -39907,7 +39911,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "131/147",
-              "name": "Pokémon Park",
+              "name": "Pok\u00e9mon Park",
               "type": "Stadium",
               "status": "HAVE",
               "stock": 0,
@@ -42159,7 +42163,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "81/144",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "Grass",
               "status": "NEED",
               "stock": 0,
@@ -42176,7 +42180,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "82/144",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -42975,7 +42979,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "129/144",
-              "name": "Miracle Sphere α",
+              "name": "Miracle Sphere \u03b1",
               "type": "TM",
               "status": "HAVE",
               "stock": 0,
@@ -42992,7 +42996,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "130/144",
-              "name": "Miracle Sphere β",
+              "name": "Miracle Sphere \u03b2",
               "type": "TM",
               "status": "HAVE",
               "stock": 0,
@@ -43009,7 +43013,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "131/144",
-              "name": "Miracle Sphere γ",
+              "name": "Miracle Sphere \u03b3",
               "type": "TM",
               "status": "NEED",
               "stock": 0,
@@ -43043,7 +43047,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "133/144",
-              "name": "Mystery Plate α",
+              "name": "Mystery Plate \u03b1",
               "type": "TM",
               "status": "NEED",
               "stock": 0,
@@ -43060,7 +43064,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "134/144",
-              "name": "Mystery Plate β",
+              "name": "Mystery Plate \u03b2",
               "type": "TM",
               "status": "NEED",
               "stock": 0,
@@ -43077,7 +43081,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "135/144",
-              "name": "Mystery Plate γ",
+              "name": "Mystery Plate \u03b3",
               "type": "TM",
               "status": "NEED",
               "stock": 0,
@@ -43094,7 +43098,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "136/144",
-              "name": "Mystery Plate δ",
+              "name": "Mystery Plate \u03b4",
               "type": "TM",
               "status": "NEED",
               "stock": 0,
@@ -43874,7 +43878,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "35",
-              "name": "Pikachu δ",
+              "name": "Pikachu \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -45412,7 +45416,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "86/109",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -45429,7 +45433,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "87/109",
-              "name": "Pokémon Reversal",
+              "name": "Pok\u00e9mon Reversal",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -45446,7 +45450,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "88/109",
-              "name": "PokéNav",
+              "name": "Pok\u00e9Nav",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -54053,7 +54057,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "70/112",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -54070,7 +54074,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "71/112",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -54478,7 +54482,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "95/112",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -54495,7 +54499,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "96/112",
-              "name": "PokéDex HANDY909",
+              "name": "Pok\u00e9Dex HANDY909",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -54512,7 +54516,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "97/112",
-              "name": "Pokémon Reversal",
+              "name": "Pok\u00e9mon Reversal",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -56271,7 +56275,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "84/109",
-              "name": "Pokémon Retriever",
+              "name": "Pok\u00e9mon Retriever",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -56356,7 +56360,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "89/109",
-              "name": "Rocket's Poké Ball",
+              "name": "Rocket's Pok\u00e9 Ball",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -59857,7 +59861,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "81/106",
-              "name": "PokéNav",
+              "name": "Pok\u00e9Nav",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -61786,7 +61790,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "87/115",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -61803,7 +61807,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "88/115",
-              "name": "Pokémon Reversal",
+              "name": "Pok\u00e9mon Reversal",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -62746,7 +62750,7 @@ const COLLECTION_DATA = {
           "cards": [
             {
               "number": "1/113",
-              "name": "Beedrill δ",
+              "name": "Beedrill \u03b4",
               "type": "Grass/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62763,7 +62767,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "2/113",
-              "name": "Crobat δ",
+              "name": "Crobat \u03b4",
               "type": "Grass/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62780,7 +62784,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "3/113",
-              "name": "Dragonite δ",
+              "name": "Dragonite \u03b4",
               "type": "Lightning/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62797,7 +62801,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "4/113",
-              "name": "Espeon δ",
+              "name": "Espeon \u03b4",
               "type": "Psychic/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62814,7 +62818,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "5/113",
-              "name": "Flareon δ",
+              "name": "Flareon \u03b4",
               "type": "Fire/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62831,7 +62835,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "6/113",
-              "name": "Gardevoir δ",
+              "name": "Gardevoir \u03b4",
               "type": "Psychic/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62848,7 +62852,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "7/113",
-              "name": "Jolteon δ",
+              "name": "Jolteon \u03b4",
               "type": "Lightning/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62865,7 +62869,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "8/113",
-              "name": "Latias δ",
+              "name": "Latias \u03b4",
               "type": "Lightning/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62882,7 +62886,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "9/113",
-              "name": "Latios δ",
+              "name": "Latios \u03b4",
               "type": "Lightning/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62899,7 +62903,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "10/113",
-              "name": "Marowak δ",
+              "name": "Marowak \u03b4",
               "type": "Fighting/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62916,7 +62920,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "11/113",
-              "name": "Metagross δ",
+              "name": "Metagross \u03b4",
               "type": "Lightning/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62933,7 +62937,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "12/113",
-              "name": "Mewtwo δ",
+              "name": "Mewtwo \u03b4",
               "type": "Fire/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62950,7 +62954,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "13/113",
-              "name": "Rayquaza δ",
+              "name": "Rayquaza \u03b4",
               "type": "Lightning/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62967,7 +62971,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "14/113",
-              "name": "Salamence δ",
+              "name": "Salamence \u03b4",
               "type": "Fire/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -62984,7 +62988,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "15/113",
-              "name": "Starmie δ",
+              "name": "Starmie \u03b4",
               "type": "Water/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -63001,7 +63005,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "16/113",
-              "name": "Tyranitar δ",
+              "name": "Tyranitar \u03b4",
               "type": "Fire/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -63018,7 +63022,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "17/113",
-              "name": "Umbreon δ",
+              "name": "Umbreon \u03b4",
               "type": "Darkness/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -63035,7 +63039,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "18/113",
-              "name": "Vaporeon δ",
+              "name": "Vaporeon \u03b4",
               "type": "Water/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -63052,7 +63056,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "19/113",
-              "name": "Azumarill δ",
+              "name": "Azumarill \u03b4",
               "type": "Water/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -63137,7 +63141,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "24/113",
-              "name": "Mightyena δ",
+              "name": "Mightyena \u03b4",
               "type": "Darkness/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -63188,7 +63192,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "27/113",
-              "name": "Sandslash δ",
+              "name": "Sandslash \u03b4",
               "type": "Fighting/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -63239,7 +63243,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "30/113",
-              "name": "Starmie δ",
+              "name": "Starmie \u03b4",
               "type": "Water/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -63426,7 +63430,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "41/113",
-              "name": "Dragonair δ",
+              "name": "Dragonair \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -63443,7 +63447,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "42/113",
-              "name": "Dragonair δ",
+              "name": "Dragonair \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -63562,7 +63566,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "49/113",
-              "name": "Metang δ",
+              "name": "Metang \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -63596,7 +63600,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "51/113",
-              "name": "Pupitar δ",
+              "name": "Pupitar \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -63630,7 +63634,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "53/113",
-              "name": "Shelgon δ",
+              "name": "Shelgon \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -63647,7 +63651,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "54/113",
-              "name": "Shelgon δ",
+              "name": "Shelgon \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -63698,7 +63702,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "57/113",
-              "name": "Bagon δ",
+              "name": "Bagon \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -63715,7 +63719,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "58/113",
-              "name": "Bagon δ",
+              "name": "Bagon \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -63732,7 +63736,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "59/113",
-              "name": "Beldum δ",
+              "name": "Beldum \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -63834,7 +63838,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "65/113",
-              "name": "Dratini δ",
+              "name": "Dratini \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -63851,7 +63855,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "66/113",
-              "name": "Dratini δ",
+              "name": "Dratini \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -63885,7 +63889,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "68/113",
-              "name": "Eevee δ",
+              "name": "Eevee \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -63970,7 +63974,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "73/113",
-              "name": "Larvitar δ",
+              "name": "Larvitar \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -66154,7 +66158,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "93/92",
-              "name": "Pikachu δ",
+              "name": "Pikachu \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -66603,7 +66607,7 @@ const COLLECTION_DATA = {
           "cards": [
             {
               "number": "1/110",
-              "name": "Armaldo δ",
+              "name": "Armaldo \u03b4",
               "type": "Fighting/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -66620,7 +66624,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "2/110",
-              "name": "Cradily δ",
+              "name": "Cradily \u03b4",
               "type": "Darkness/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -66637,7 +66641,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "3/110",
-              "name": "Deoxys δ [Attack]",
+              "name": "Deoxys \u03b4 [Attack]",
               "type": "Darkness",
               "status": "HAVE",
               "stock": 0,
@@ -66654,7 +66658,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "4/110",
-              "name": "Deoxys δ [Defense]",
+              "name": "Deoxys \u03b4 [Defense]",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -66671,7 +66675,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "5/110",
-              "name": "Deoxys δ [Normal]",
+              "name": "Deoxys \u03b4 [Normal]",
               "type": "Colorless",
               "status": "HAVE",
               "stock": 0,
@@ -66688,7 +66692,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "6/110",
-              "name": "Deoxys δ [Speed]",
+              "name": "Deoxys \u03b4 [Speed]",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -66705,7 +66709,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "7/110",
-              "name": "Flygon δ",
+              "name": "Flygon \u03b4",
               "type": "Grass/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -66722,7 +66726,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "8/110",
-              "name": "Gyarados δ",
+              "name": "Gyarados \u03b4",
               "type": "Lightning/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -66739,7 +66743,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "9/110",
-              "name": "Kabutops δ",
+              "name": "Kabutops \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -66756,7 +66760,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "10/110",
-              "name": "Kingdra δ",
+              "name": "Kingdra \u03b4",
               "type": "Fire/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -66773,7 +66777,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "11/110",
-              "name": "Latias δ",
+              "name": "Latias \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -66790,7 +66794,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "12/110",
-              "name": "Latios δ",
+              "name": "Latios \u03b4",
               "type": "Water",
               "status": "HAVE",
               "stock": 0,
@@ -66807,7 +66811,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "13/110",
-              "name": "Omastar δ",
+              "name": "Omastar \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -66824,7 +66828,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "14/110",
-              "name": "Pidgeot δ",
+              "name": "Pidgeot \u03b4",
               "type": "Lightning/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -66841,7 +66845,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "15/110",
-              "name": "Raichu δ",
+              "name": "Raichu \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -66858,7 +66862,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "16/110",
-              "name": "Rayquaza δ",
+              "name": "Rayquaza \u03b4",
               "type": "Water/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -66875,7 +66879,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "17/110",
-              "name": "Vileplume δ",
+              "name": "Vileplume \u03b4",
               "type": "Psychic/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -66909,7 +66913,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "19/110",
-              "name": "Bellossom δ",
+              "name": "Bellossom \u03b4",
               "type": "Water",
               "status": "HAVE",
               "stock": 0,
@@ -66943,7 +66947,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "21/110",
-              "name": "Latias δ",
+              "name": "Latias \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -66960,7 +66964,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "22/110",
-              "name": "Latios δ",
+              "name": "Latios \u03b4",
               "type": "Water",
               "status": "HAVE",
               "stock": 0,
@@ -66994,7 +66998,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "24/110",
-              "name": "Mewtwo δ",
+              "name": "Mewtwo \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -67028,7 +67032,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "26/110",
-              "name": "Rayquaza δ",
+              "name": "Rayquaza \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -67181,7 +67185,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "35/110",
-              "name": "Aerodactyl δ",
+              "name": "Aerodactyl \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -67215,7 +67219,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "37/110",
-              "name": "Chimecho δ",
+              "name": "Chimecho \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -67283,7 +67287,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "41/110",
-              "name": "Exeggutor δ",
+              "name": "Exeggutor \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -67300,7 +67304,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "42/110",
-              "name": "Gloom δ",
+              "name": "Gloom \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -67317,7 +67321,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "43/110",
-              "name": "Golduck δ",
+              "name": "Golduck \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -67402,7 +67406,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "48/110",
-              "name": "Persian δ",
+              "name": "Persian \u03b4",
               "type": "Darkness/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -67419,7 +67423,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "49/110",
-              "name": "Pidgeotto δ",
+              "name": "Pidgeotto \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -67436,7 +67440,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "50/110",
-              "name": "Primeape δ",
+              "name": "Primeape \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -67470,7 +67474,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "52/110",
-              "name": "Seadra δ",
+              "name": "Seadra \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -67487,7 +67491,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "53/110",
-              "name": "Sharpedo δ",
+              "name": "Sharpedo \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -67504,7 +67508,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "54/110",
-              "name": "Vibrava δ",
+              "name": "Vibrava \u03b4",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -67555,7 +67559,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "57/110",
-              "name": "Anorith δ",
+              "name": "Anorith \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -67623,7 +67627,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "61/110",
-              "name": "Carvanha δ",
+              "name": "Carvanha \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -67691,7 +67695,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "65/110",
-              "name": "Exeggcute δ",
+              "name": "Exeggcute \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -67708,7 +67712,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "66/110",
-              "name": "Horsea δ",
+              "name": "Horsea \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -67725,7 +67729,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "67/110",
-              "name": "Kabuto δ",
+              "name": "Kabuto \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -67742,7 +67746,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "68/110",
-              "name": "Lileep δ",
+              "name": "Lileep \u03b4",
               "type": "Darkness",
               "status": "HAVE",
               "stock": 0,
@@ -67759,7 +67763,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "69/110",
-              "name": "Magikarp δ",
+              "name": "Magikarp \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -67776,7 +67780,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "70/110",
-              "name": "Mankey δ",
+              "name": "Mankey \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -67793,7 +67797,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "71/110",
-              "name": "Meowth δ",
+              "name": "Meowth \u03b4",
               "type": "Darkness/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -67827,7 +67831,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "73/110",
-              "name": "Oddish δ",
+              "name": "Oddish \u03b4",
               "type": "Water",
               "status": "HAVE",
               "stock": 0,
@@ -67844,7 +67848,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "74/110",
-              "name": "Omanyte δ",
+              "name": "Omanyte \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -67878,7 +67882,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "76/110",
-              "name": "Pichu δ",
+              "name": "Pichu \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -67895,7 +67899,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "77/110",
-              "name": "Pidgey δ",
+              "name": "Pidgey \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -67929,7 +67933,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "79/110",
-              "name": "Pikachu δ",
+              "name": "Pikachu \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -67963,7 +67967,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "81/110",
-              "name": "Psyduck δ",
+              "name": "Psyduck \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -68014,7 +68018,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "84/110",
-              "name": "Trapinch δ",
+              "name": "Trapinch \u03b4",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -68252,7 +68256,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "98/110",
-              "name": "δ Rainbow Energy",
+              "name": "\u03b4 Rainbow Energy",
               "type": "Energy",
               "status": "HAVE",
               "stock": 0,
@@ -68464,7 +68468,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "2/100",
-              "name": "Blastoise δ",
+              "name": "Blastoise \u03b4",
               "type": "Fighting/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -68498,7 +68502,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "4/100",
-              "name": "Charizard δ",
+              "name": "Charizard \u03b4",
               "type": "Lightning/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -68532,7 +68536,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "6/100",
-              "name": "Ludicolo δ",
+              "name": "Ludicolo \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -68685,7 +68689,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "15/100",
-              "name": "Cacturne δ",
+              "name": "Cacturne \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -68736,7 +68740,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "18/100",
-              "name": "Fearow δ",
+              "name": "Fearow \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -68753,7 +68757,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "19/100",
-              "name": "Grovyle δ",
+              "name": "Grovyle \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -68804,7 +68808,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "22/100",
-              "name": "Kingler δ",
+              "name": "Kingler \u03b4",
               "type": "Fire/Metal",
               "status": "HAVE",
               "stock": 0,
@@ -68872,7 +68876,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "26/100",
-              "name": "Pelipper δ",
+              "name": "Pelipper \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -68940,7 +68944,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "30/100",
-              "name": "Charmeleon δ",
+              "name": "Charmeleon \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -69263,7 +69267,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "49/100",
-              "name": "Charmander δ",
+              "name": "Charmander \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -69586,7 +69590,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "68/100",
-              "name": "Treecko δ",
+              "name": "Treecko \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -69824,7 +69828,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "82/100",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -69841,7 +69845,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "83/100",
-              "name": "PokéNav",
+              "name": "Pok\u00e9Nav",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -70062,7 +70066,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "96/100",
-              "name": "Sceptile ex δ",
+              "name": "Sceptile ex \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -70121,7 +70125,7 @@ const COLLECTION_DATA = {
           "cards": [
             {
               "number": "1/101",
-              "name": "Ampharos δ",
+              "name": "Ampharos \u03b4",
               "type": "Colorless",
               "status": "HAVE",
               "stock": 0,
@@ -70138,7 +70142,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "2/101",
-              "name": "Feraligatr δ",
+              "name": "Feraligatr \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -70155,7 +70159,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "3/101",
-              "name": "Heracross δ",
+              "name": "Heracross \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -70172,7 +70176,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "4/101",
-              "name": "Meganium δ",
+              "name": "Meganium \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -70189,7 +70193,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "5/101",
-              "name": "Milotic δ",
+              "name": "Milotic \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -70206,7 +70210,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "6/101",
-              "name": "Nidoking δ",
+              "name": "Nidoking \u03b4",
               "type": "Darkness",
               "status": "HAVE",
               "stock": 0,
@@ -70223,7 +70227,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "7/101",
-              "name": "Nidoqueen δ",
+              "name": "Nidoqueen \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -70240,7 +70244,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "8/101",
-              "name": "Ninetales δ",
+              "name": "Ninetales \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -70257,7 +70261,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "9/101",
-              "name": "Pinsir δ",
+              "name": "Pinsir \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -70274,7 +70278,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "10/101",
-              "name": "Snorlax δ",
+              "name": "Snorlax \u03b4",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -70291,7 +70295,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "11/101",
-              "name": "Togetic δ",
+              "name": "Togetic \u03b4",
               "type": "Water",
               "status": "HAVE",
               "stock": 0,
@@ -70308,7 +70312,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "12/101",
-              "name": "Typhlosion δ",
+              "name": "Typhlosion \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -70325,7 +70329,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "13/101",
-              "name": "Arbok δ",
+              "name": "Arbok \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -70342,7 +70346,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "14/101",
-              "name": "Cloyster δ",
+              "name": "Cloyster \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -70359,7 +70363,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "15/101",
-              "name": "Dewgong δ",
+              "name": "Dewgong \u03b4",
               "type": "Colorless",
               "status": "HAVE",
               "stock": 0,
@@ -70376,7 +70380,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "16/101",
-              "name": "Gligar δ",
+              "name": "Gligar \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -70393,7 +70397,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "17/101",
-              "name": "Jynx δ",
+              "name": "Jynx \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -70410,7 +70414,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "18/101",
-              "name": "Ledian δ",
+              "name": "Ledian \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -70427,7 +70431,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "19/101",
-              "name": "Lickitung δ",
+              "name": "Lickitung \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -70444,7 +70448,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "20/101",
-              "name": "Mantine δ",
+              "name": "Mantine \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -70461,7 +70465,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "21/101",
-              "name": "Quagsire δ",
+              "name": "Quagsire \u03b4",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -70478,7 +70482,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "22/101",
-              "name": "Seadra δ",
+              "name": "Seadra \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -70495,7 +70499,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "23/101",
-              "name": "Tropius δ",
+              "name": "Tropius \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -70512,7 +70516,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "24/101",
-              "name": "Vibrava δ",
+              "name": "Vibrava \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -70529,7 +70533,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "25/101",
-              "name": "Xatu δ",
+              "name": "Xatu \u03b4",
               "type": "Darkness",
               "status": "HAVE",
               "stock": 0,
@@ -70546,7 +70550,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "26/101",
-              "name": "Bayleef δ",
+              "name": "Bayleef \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -70563,7 +70567,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "27/101",
-              "name": "Croconaw δ",
+              "name": "Croconaw \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -70580,7 +70584,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "28/101",
-              "name": "Dragonair δ",
+              "name": "Dragonair \u03b4",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -70597,7 +70601,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "29/101",
-              "name": "Electabuzz δ",
+              "name": "Electabuzz \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -70614,7 +70618,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "30/101",
-              "name": "Flaaffy δ",
+              "name": "Flaaffy \u03b4",
               "type": "Colorless",
               "status": "HAVE",
               "stock": 0,
@@ -70631,7 +70635,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "31/101",
-              "name": "Horsea δ",
+              "name": "Horsea \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -70665,7 +70669,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "33/101",
-              "name": "Kirlia δ",
+              "name": "Kirlia \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -70682,7 +70686,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "34/101",
-              "name": "Nidorina δ",
+              "name": "Nidorina \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -70699,7 +70703,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "35/101",
-              "name": "Nidorino δ",
+              "name": "Nidorino \u03b4",
               "type": "Darkness",
               "status": "HAVE",
               "stock": 0,
@@ -70716,7 +70720,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "36/101",
-              "name": "Quilava δ",
+              "name": "Quilava \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -70733,7 +70737,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "37/101",
-              "name": "Seadra δ",
+              "name": "Seadra \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -70750,7 +70754,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "38/101",
-              "name": "Shelgon δ",
+              "name": "Shelgon \u03b4",
               "type": "Water",
               "status": "HAVE",
               "stock": 0,
@@ -70767,7 +70771,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "39/101",
-              "name": "Smeargle δ",
+              "name": "Smeargle \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -70784,7 +70788,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "40/101",
-              "name": "Swellow δ",
+              "name": "Swellow \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -70801,7 +70805,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "41/101",
-              "name": "Togepi δ",
+              "name": "Togepi \u03b4",
               "type": "Water",
               "status": "HAVE",
               "stock": 0,
@@ -70818,7 +70822,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "42/101",
-              "name": "Vibrava δ",
+              "name": "Vibrava \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -70835,7 +70839,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "43/101",
-              "name": "Bagon δ",
+              "name": "Bagon \u03b4",
               "type": "Water",
               "status": "HAVE",
               "stock": 0,
@@ -70852,7 +70856,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "44/101",
-              "name": "Chikorita δ",
+              "name": "Chikorita \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -70869,7 +70873,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "45/101",
-              "name": "Cyndaquil δ",
+              "name": "Cyndaquil \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -70886,7 +70890,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "46/101",
-              "name": "Dratini δ",
+              "name": "Dratini \u03b4",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -70903,7 +70907,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "47/101",
-              "name": "Ekans δ",
+              "name": "Ekans \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -70920,7 +70924,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "48/101",
-              "name": "Elekid δ",
+              "name": "Elekid \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -70937,7 +70941,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "49/101",
-              "name": "Feebas δ",
+              "name": "Feebas \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -70954,7 +70958,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "50/101",
-              "name": "Horsea δ",
+              "name": "Horsea \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -70988,7 +70992,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "52/101",
-              "name": "Larvitar δ",
+              "name": "Larvitar \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -71005,7 +71009,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "53/101",
-              "name": "Ledyba δ",
+              "name": "Ledyba \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -71022,7 +71026,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "54/101",
-              "name": "Mareep δ",
+              "name": "Mareep \u03b4",
               "type": "Colorless",
               "status": "HAVE",
               "stock": 0,
@@ -71039,7 +71043,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "55/101",
-              "name": "Natu δ",
+              "name": "Natu \u03b4",
               "type": "Darkness",
               "status": "HAVE",
               "stock": 0,
@@ -71056,7 +71060,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "56/101",
-              "name": "Nidoran♀ δ",
+              "name": "Nidoran\u2640 \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -71073,7 +71077,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "57/101",
-              "name": "Nidoran♂ δ",
+              "name": "Nidoran\u2642 \u03b4",
               "type": "Darkness",
               "status": "HAVE",
               "stock": 0,
@@ -71107,7 +71111,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "59/101",
-              "name": "Pupitar δ",
+              "name": "Pupitar \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -71141,7 +71145,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "61/101",
-              "name": "Ralts δ",
+              "name": "Ralts \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -71158,7 +71162,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "62/101",
-              "name": "Seel δ",
+              "name": "Seel \u03b4",
               "type": "Colorless",
               "status": "HAVE",
               "stock": 0,
@@ -71175,7 +71179,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "63/101",
-              "name": "Shellder δ",
+              "name": "Shellder \u03b4",
               "type": "Fighting",
               "status": "HAVE",
               "stock": 0,
@@ -71192,7 +71196,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "64/101",
-              "name": "Smoochum δ",
+              "name": "Smoochum \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -71209,7 +71213,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "65/101",
-              "name": "Swablu δ",
+              "name": "Swablu \u03b4",
               "type": "Water",
               "status": "HAVE",
               "stock": 0,
@@ -71226,7 +71230,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "66/101",
-              "name": "Taillow δ",
+              "name": "Taillow \u03b4",
               "type": "Fire",
               "status": "HAVE",
               "stock": 0,
@@ -71243,7 +71247,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "67/101",
-              "name": "Totodile δ",
+              "name": "Totodile \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -71260,7 +71264,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "68/101",
-              "name": "Trapinch δ",
+              "name": "Trapinch \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -71277,7 +71281,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "69/101",
-              "name": "Trapinch δ",
+              "name": "Trapinch \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -71294,7 +71298,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "70/101",
-              "name": "Vulpix δ",
+              "name": "Vulpix \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -71311,7 +71315,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "71/101",
-              "name": "Wooper δ",
+              "name": "Wooper \u03b4",
               "type": "Grass",
               "status": "HAVE",
               "stock": 0,
@@ -71600,7 +71604,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "88/101",
-              "name": "δ Rainbow Energy",
+              "name": "\u03b4 Rainbow Energy",
               "type": "Energy",
               "status": "HAVE",
               "stock": 0,
@@ -71634,7 +71638,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "90/101",
-              "name": "Altaria ex δ",
+              "name": "Altaria ex \u03b4",
               "type": "Water",
               "status": "NEED",
               "stock": 0,
@@ -71651,7 +71655,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "91/101",
-              "name": "Dragonite ex δ",
+              "name": "Dragonite ex \u03b4",
               "type": "Grass",
               "status": "NEED",
               "stock": 0,
@@ -71668,7 +71672,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "92/101",
-              "name": "Flygon ex δ",
+              "name": "Flygon ex \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -71685,7 +71689,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "93/101",
-              "name": "Gardevoir ex δ",
+              "name": "Gardevoir ex \u03b4",
               "type": "Fire",
               "status": "NEED",
               "stock": 0,
@@ -71702,7 +71706,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "94/101",
-              "name": "Kingdra ex δ",
+              "name": "Kingdra ex \u03b4",
               "type": "Fighting",
               "status": "NEED",
               "stock": 0,
@@ -71719,7 +71723,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "95/101",
-              "name": "Latias ex δ",
+              "name": "Latias ex \u03b4",
               "type": "Fire",
               "status": "NEED",
               "stock": 0,
@@ -71736,7 +71740,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "96/101",
-              "name": "Latios ex δ",
+              "name": "Latios ex \u03b4",
               "type": "Water",
               "status": "HAVE",
               "stock": 0,
@@ -71753,7 +71757,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "97/101",
-              "name": "Rayquaza ex δ",
+              "name": "Rayquaza ex \u03b4",
               "type": "Lightning",
               "status": "NEED",
               "stock": 0,
@@ -71770,7 +71774,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "98/101",
-              "name": "Salamence ex δ",
+              "name": "Salamence ex \u03b4",
               "type": "Water",
               "status": "NEED",
               "stock": 0,
@@ -71787,7 +71791,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "99/101",
-              "name": "Tyranitar ex δ",
+              "name": "Tyranitar ex \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -76671,7 +76675,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "108/130",
-              "name": "Night Pokémon Center",
+              "name": "Night Pok\u00e9mon Center",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -76705,7 +76709,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "110/130",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -76722,7 +76726,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "111/130",
-              "name": "Pokédex HANDY910is",
+              "name": "Pok\u00e9dex HANDY910is",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -78600,7 +78604,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "91/123",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -81183,7 +81187,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "97/132",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -85041,7 +85045,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "85/100",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Trainer",
               "status": "NEED",
               "stock": 0,
@@ -87565,7 +87569,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "133/146",
-              "name": "Poké Radar",
+              "name": "Pok\u00e9 Radar",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -89290,7 +89294,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "88/100",
-              "name": "Poké Blower +",
+              "name": "Pok\u00e9 Blower +",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -89307,7 +89311,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "89/100",
-              "name": "Poké Drawer +",
+              "name": "Pok\u00e9 Drawer +",
               "type": "Trainer",
               "status": "NEED",
               "stock": 0,
@@ -89324,7 +89328,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "90/100",
-              "name": "Poké Healer +",
+              "name": "Pok\u00e9 Healer +",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -91353,7 +91357,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "113/127",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -91370,7 +91374,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "114/127",
-              "name": "Pokédex HANDY910is",
+              "name": "Pok\u00e9dex HANDY910is",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -91387,7 +91391,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "115/127",
-              "name": "Pokémon Rescue",
+              "name": "Pok\u00e9mon Rescue",
               "type": "Trainer",
               "status": "NEED",
               "stock": 0,
@@ -91438,7 +91442,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "118/127",
-              "name": "Team Galactic's Invention G-105 Poké Turn",
+              "name": "Team Galactic's Invention G-105 Pok\u00e9 Turn",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -92874,7 +92878,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "71/111",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -92891,7 +92895,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "72/111",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -93248,7 +93252,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "93/111",
-              "name": "Pokémon Contest Hall",
+              "name": "Pok\u00e9mon Contest Hall",
               "type": "Stadium",
               "status": "HAVE",
               "stock": 0,
@@ -99834,7 +99838,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "95/123",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -99851,7 +99855,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "96/123",
-              "name": "Pokégear 3.0",
+              "name": "Pok\u00e9gear 3.0",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -99868,7 +99872,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "97/123",
-              "name": "Pokémon Collector",
+              "name": "Pok\u00e9mon Collector",
               "type": "Supporter",
               "status": "HAVE",
               "stock": 0,
@@ -99885,7 +99889,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "98/123",
-              "name": "Pokémon Communication",
+              "name": "Pok\u00e9mon Communication",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -99902,7 +99906,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "99/123",
-              "name": "Pokémon Reversal",
+              "name": "Pok\u00e9mon Reversal",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -101712,7 +101716,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "81/95",
-              "name": "Pokémon Circulator",
+              "name": "Pok\u00e9mon Circulator",
               "type": "Trainer",
               "status": "HAVE",
               "stock": 0,
@@ -102349,7 +102353,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "22/30",
-              "name": "Pokémon Communication",
+              "name": "Pok\u00e9mon Communication",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -102366,7 +102370,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "23/30",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -102434,7 +102438,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "27/30",
-              "name": "Pokémon Communication",
+              "name": "Pok\u00e9mon Communication",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -102859,7 +102863,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "22/30",
-              "name": "Pokémon Collector",
+              "name": "Pok\u00e9mon Collector",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -102910,7 +102914,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "25/30",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -102944,7 +102948,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "27/30",
-              "name": "Pokémon Collector",
+              "name": "Pok\u00e9mon Collector",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -105731,7 +105735,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "69/102",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -105748,7 +105752,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "70/102",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -109687,7 +109691,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "97/114",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -109703,7 +109707,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "98/114",
-              "name": "Pokédex",
+              "name": "Pok\u00e9dex",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -109719,7 +109723,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "99/114",
-              "name": "Pokémon Communication",
+              "name": "Pok\u00e9mon Communication",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -111575,7 +111579,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "95/98",
-              "name": "Pokémon Catcher",
+              "name": "Pok\u00e9mon Catcher",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -114615,7 +114619,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "90/99",
-              "name": "Pokémon Center",
+              "name": "Pok\u00e9mon Center",
               "type": "Stadium",
               "status": "NEED",
               "stock": 0,
@@ -116319,7 +116323,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "111/108",
-              "name": "Pokémon Catcher",
+              "name": "Pok\u00e9mon Catcher",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -120679,7 +120683,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "131/149",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -123895,7 +123899,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "40/116",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "Psychic",
               "status": "NEED",
               "stock": 0,
@@ -123943,7 +123947,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "43/116",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Psychic",
               "status": "NEED",
               "stock": 0,
@@ -126543,7 +126547,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "83/101",
-              "name": "Pokémon Catcher",
+              "name": "Pok\u00e9mon Catcher",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -131390,7 +131394,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "35/39",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -131406,7 +131410,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "36/39",
-              "name": "Pokémon Catcher",
+              "name": "Pok\u00e9mon Catcher",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -133934,7 +133938,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "23/30",
-              "name": "Pokémon Catcher",
+              "name": "Pok\u00e9mon Catcher",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -133982,7 +133986,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "26/30",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -134270,7 +134274,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "14/30",
-              "name": "Pokémon Catcher",
+              "name": "Pok\u00e9mon Catcher",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -134382,7 +134386,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "21/30",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -135446,7 +135450,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "62/106",
-              "name": "Flabébé",
+              "name": "Flab\u00e9b\u00e9",
               "type": "Fairy",
               "status": "NEED",
               "stock": 0,
@@ -135462,7 +135466,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "63/106",
-              "name": "Flabébé",
+              "name": "Flab\u00e9b\u00e9",
               "type": "Fairy",
               "status": "NEED",
               "stock": 0,
@@ -135894,7 +135898,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "93/106",
-              "name": "Pokémon Center Lady",
+              "name": "Pok\u00e9mon Center Lady",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -135910,7 +135914,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "94/106",
-              "name": "Pokémon Fan Club",
+              "name": "Pok\u00e9mon Fan Club",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -136022,7 +136026,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "105/106",
-              "name": "Pokémon Center Lady",
+              "name": "Pok\u00e9mon Center Lady",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -136038,7 +136042,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "106/106",
-              "name": "Pokémon Fan Club",
+              "name": "Pok\u00e9mon Fan Club",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -140550,7 +140554,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "66/160",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "Psychic",
               "status": "NEED",
               "stock": 0,
@@ -146886,7 +146890,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "101/162",
-              "name": "Flabébé",
+              "name": "Flab\u00e9b\u00e9",
               "type": "Fairy",
               "status": "NEED",
               "stock": 0,
@@ -149334,7 +149338,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "105/122",
-              "name": "Pokémon Catcher",
+              "name": "Pok\u00e9mon Catcher",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -150366,7 +150370,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "67/83",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -150382,7 +150386,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "68/83",
-              "name": "Pokémon Center Lady",
+              "name": "Pok\u00e9mon Center Lady",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -150398,7 +150402,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "69/83",
-              "name": "Pokémon Fan Club",
+              "name": "Pok\u00e9mon Fan Club",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -150734,7 +150738,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "RC17/RC32",
-              "name": "Flabébé",
+              "name": "Flab\u00e9b\u00e9",
               "type": "Fairy",
               "status": "NEED",
               "stock": 0,
@@ -152974,7 +152978,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "107/124",
-              "name": "Pokémon Fan Club",
+              "name": "Pok\u00e9mon Fan Club",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -153734,7 +153738,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "43/114",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Psychic",
               "status": "NEED",
               "stock": 0,
@@ -154502,7 +154506,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "99/114",
-              "name": "Captivating Poké Puff",
+              "name": "Captivating Pok\u00e9 Puff",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -154582,7 +154586,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "104/114",
-              "name": "Pokémon Ranger",
+              "name": "Pok\u00e9mon Ranger",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -154630,7 +154634,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "113/114",
-              "name": "Pokémon Ranger",
+              "name": "Pok\u00e9mon Ranger",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -155182,7 +155186,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "43/108",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -155710,7 +155714,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "82/108",
-              "name": "Pokédex",
+              "name": "Pok\u00e9dex",
               "type": "Item",
               "status": "HAVE",
               "stock": 0,
@@ -159621,7 +159625,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "125/149",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -159637,7 +159641,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "126/149",
-              "name": "Pokémon Catcher",
+              "name": "Pok\u00e9mon Catcher",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -164005,7 +164009,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "122/147",
-              "name": "Rotom Dex Poké Finder Mode",
+              "name": "Rotom Dex Pok\u00e9 Finder Mode",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -165293,7 +165297,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "63/73",
-              "name": "Pokémon Breeder",
+              "name": "Pok\u00e9mon Breeder",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -165309,7 +165313,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "64/73",
-              "name": "Pokémon Catcher",
+              "name": "Pok\u00e9mon Catcher",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -165437,7 +165441,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "73/73",
-              "name": "Pokémon Breeder",
+              "name": "Pok\u00e9mon Breeder",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -169005,7 +169009,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "133/156",
-              "name": "Pokémon Fan Club",
+              "name": "Pok\u00e9mon Fan Club",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -169197,7 +169201,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "155/156",
-              "name": "Pokémon Fan Club",
+              "name": "Pok\u00e9mon Fan Club",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -170533,7 +170537,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "83/131",
-              "name": "Flabébé",
+              "name": "Flab\u00e9b\u00e9",
               "type": "Fairy",
               "status": "NEED",
               "stock": 0,
@@ -170549,7 +170553,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "84/131",
-              "name": "Flabébé",
+              "name": "Flab\u00e9b\u00e9",
               "type": "Fairy",
               "status": "NEED",
               "stock": 0,
@@ -173261,7 +173265,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "140/168",
-              "name": "PokéNav",
+              "name": "Pok\u00e9Nav",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -173629,7 +173633,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "181/168",
-              "name": "PokéNav",
+              "name": "Pok\u00e9Nav",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -178533,7 +178537,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "54/181",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "Psychic",
               "status": "NEED",
               "stock": 0,
@@ -178581,7 +178585,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "57/181",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "Psychic",
               "status": "NEED",
               "stock": 0,
@@ -179973,7 +179977,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "152/181",
-              "name": "Pokémon Communication",
+              "name": "Pok\u00e9mon Communication",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -179989,7 +179993,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "152a/181",
-              "name": "Pokémon Communication",
+              "name": "Pok\u00e9mon Communication",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -180309,7 +180313,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "196/181",
-              "name": "Pokémon Communication",
+              "name": "Pok\u00e9mon Communication",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -183301,7 +183305,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "182/214",
-              "name": "Pokégear 3.0",
+              "name": "Pok\u00e9gear 3.0",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -183317,7 +183321,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "182a/214",
-              "name": "Pokégear 3.0",
+              "name": "Pok\u00e9gear 3.0",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -183621,7 +183625,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "233/214",
-              "name": "Pokégear 3.0",
+              "name": "Pok\u00e9gear 3.0",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -186637,7 +186641,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "204/236",
-              "name": "Poké Maniac",
+              "name": "Pok\u00e9 Maniac",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -186653,7 +186657,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "205/236",
-              "name": "Pokémon Research Lab",
+              "name": "Pok\u00e9mon Research Lab",
               "type": "Stadium",
               "status": "NEED",
               "stock": 0,
@@ -186893,7 +186897,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "236/236",
-              "name": "Poké Maniac",
+              "name": "Pok\u00e9 Maniac",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -187925,7 +187929,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "64/68",
-              "name": "Pokémon Center Lady",
+              "name": "Pok\u00e9mon Center Lady",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -191069,7 +191073,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "149/236",
-              "name": "Flabébé",
+              "name": "Flab\u00e9b\u00e9",
               "type": "Fairy",
               "status": "NEED",
               "stock": 0,
@@ -191085,7 +191089,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "150/236",
-              "name": "Flabébé",
+              "name": "Flab\u00e9b\u00e9",
               "type": "Fairy",
               "status": "NEED",
               "stock": 0,
@@ -191757,7 +191761,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "197/236",
-              "name": "Lillie's Poké Doll",
+              "name": "Lillie's Pok\u00e9 Doll",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -192333,7 +192337,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "267/236",
-              "name": "Lillie's Poké Doll",
+              "name": "Lillie's Pok\u00e9 Doll",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -194460,7 +194464,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "SWSH136",
-              "name": "Mimikyu δ",
+              "name": "Mimikyu \u03b4",
               "type": "Water",
               "status": "NEED",
               "stock": 0,
@@ -199580,7 +199584,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "173/265",
-              "name": "Poké Kid",
+              "name": "Pok\u00e9 Kid",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -199596,7 +199600,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "174/265",
-              "name": "Pokégear 3.0",
+              "name": "Pok\u00e9gear 3.0",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -199612,7 +199616,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "175/265",
-              "name": "Pokémon Catcher",
+              "name": "Pok\u00e9mon Catcher",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -199628,7 +199632,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "176/265",
-              "name": "Pokémon Center Lady",
+              "name": "Pok\u00e9mon Center Lady",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -201236,7 +201240,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "095/192",
-              "name": "Galarian Sirfetch’d",
+              "name": "Galarian Sirfetch\u2019d",
               "type": "Fighting",
               "status": "NEED",
               "stock": 0,
@@ -202068,7 +202072,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "154/192",
-              "name": "Boss’s Orders",
+              "name": "Boss\u2019s Orders",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -202228,7 +202232,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "164/192",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -206772,7 +206776,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "059/073",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "Item",
               "status": "NEED",
               "stock": 0,
@@ -206788,7 +206792,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "060/073",
-              "name": "Pokémon Center Lady",
+              "name": "Pok\u00e9mon Center Lady",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -210076,7 +210080,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "185/185",
-              "name": "Pokémon Center Lady",
+              "name": "Pok\u00e9mon Center Lady",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -211492,7 +211496,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "070/072",
-              "name": "Poké Kid",
+              "name": "Pok\u00e9 Kid",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -221308,7 +221312,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "071/203",
-              "name": "Flabébé",
+              "name": "Flab\u00e9b\u00e9",
               "type": "Psychic",
               "status": "NEED",
               "stock": 0,
@@ -224596,7 +224600,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "93/101",
-              "name": "Gardevoir ex δ",
+              "name": "Gardevoir ex \u03b4",
               "type": "Psychic",
               "status": "HAVE",
               "stock": 0,
@@ -231460,7 +231464,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "133/172",
-              "name": "Café Master",
+              "name": "Caf\u00e9 Master",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -232708,7 +232712,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "TG25/TG30",
-              "name": "Café Master",
+              "name": "Caf\u00e9 Master",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -236028,7 +236032,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "265/189",
-              "name": "Gardenia’s Vigor",
+              "name": "Gardenia\u2019s Vigor",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -237828,7 +237832,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "068/078",
-              "name": "PokéStop",
+              "name": "Pok\u00e9Stop",
               "type": "Stadium",
               "status": "NEED",
               "stock": 0,
@@ -247755,7 +247759,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "091/198",
-              "name": "Flabébé",
+              "name": "Flab\u00e9b\u00e9",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -249259,7 +249263,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "185/198",
-              "name": "Poké Ball",
+              "name": "Pok\u00e9 Ball",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -249275,7 +249279,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "186/198",
-              "name": "Pokégear 3.0",
+              "name": "Pok\u00e9gear 3.0",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -249291,7 +249295,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "187/198",
-              "name": "Pokémon Catcher",
+              "name": "Pok\u00e9mon Catcher",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -257979,7 +257983,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "192/197",
-              "name": "Pokémon League Headquarters",
+              "name": "Pok\u00e9mon League Headquarters",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -259059,7 +259063,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "029/165",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -259107,7 +259111,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "032/165",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -262379,7 +262383,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "029/165",
-              "name": "Nidoran♀",
+              "name": "Nidoran\u2640",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -262427,7 +262431,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "032/165",
-              "name": "Nidoran♂",
+              "name": "Nidoran\u2642",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -278347,7 +278351,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "086/167",
-              "name": "Flabébé",
+              "name": "Flab\u00e9b\u00e9",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -281587,7 +281591,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "062/064",
-              "name": "Poké Vital A",
+              "name": "Pok\u00e9 Vital A",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -300595,7 +300599,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "114/182",
-              "name": "Team Rocket's Nidoran♀",
+              "name": "Team Rocket's Nidoran\u2640",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -300643,7 +300647,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "117/182",
-              "name": "Team Rocket's Nidoran♂",
+              "name": "Team Rocket's Nidoran\u2642",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -304027,7 +304031,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "084/086",
-              "name": "Pokégear 3.0",
+              "name": "Pok\u00e9gear 3.0",
               "type": "",
               "status": "HAVE",
               "stock": 0,
@@ -311877,7 +311881,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "10/17",
-              "name": "Pokémon Park",
+              "name": "Pok\u00e9mon Park",
               "type": "Stadium",
               "status": "HAVE",
               "stock": 0,
@@ -312293,7 +312297,7 @@ const COLLECTION_DATA = {
           "cards": [
             {
               "number": "44213",
-              "name": "Chimecho δ",
+              "name": "Chimecho \u03b4",
               "type": "Metal",
               "status": "NEED",
               "stock": 0,
@@ -312309,7 +312313,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "44244",
-              "name": "Deoxys δ [Normal]",
+              "name": "Deoxys \u03b4 [Normal]",
               "type": "Colorless",
               "status": "HAVE",
               "stock": 0,
@@ -312421,7 +312425,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "44456",
-              "name": "Pokémon Fan Club",
+              "name": "Pok\u00e9mon Fan Club",
               "type": "Supporter",
               "status": "NEED",
               "stock": 0,
@@ -312517,7 +312521,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "15/17",
-              "name": "Treecko δ",
+              "name": "Treecko \u03b4",
               "type": "Psychic",
               "status": "NEED",
               "stock": 0,
@@ -312605,7 +312609,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "43541",
-              "name": "Mew δ",
+              "name": "Mew \u03b4",
               "type": "Fire",
               "status": "NEED",
               "stock": 0,
@@ -312637,7 +312641,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "43665",
-              "name": "Charmeleon δ",
+              "name": "Charmeleon \u03b4",
               "type": "Lightning",
               "status": "NEED",
               "stock": 0,
@@ -312701,7 +312705,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "43725",
-              "name": "δ Rainbow Energy",
+              "name": "\u03b4 Rainbow Energy",
               "type": "Energy",
               "status": "NEED",
               "stock": 0,
@@ -312717,7 +312721,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "43755",
-              "name": "Charmander δ",
+              "name": "Charmander \u03b4",
               "type": "Lightning",
               "status": "NEED",
               "stock": 0,
@@ -312733,7 +312737,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "43786",
-              "name": "Meowth δ",
+              "name": "Meowth \u03b4",
               "type": "Darkness",
               "status": "HAVE",
               "stock": 0,
@@ -312765,7 +312769,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "13/17",
-              "name": "Pikachu δ",
+              "name": "Pikachu \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
@@ -312781,7 +312785,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "14/17",
-              "name": "Pelipper δ",
+              "name": "Pelipper \u03b4",
               "type": "Lightning",
               "status": "HAVE",
               "stock": 0,
@@ -312797,7 +312801,7 @@ const COLLECTION_DATA = {
             },
             {
               "number": "15/17",
-              "name": "Zangoose δ",
+              "name": "Zangoose \u03b4",
               "type": "Metal",
               "status": "HAVE",
               "stock": 0,
