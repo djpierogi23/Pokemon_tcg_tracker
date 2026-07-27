@@ -256,7 +256,10 @@ class JustTCGService {
 
     // Batch fetch prices for multiple cards
     async batchFetchPrices(setName, cardNumbers, edition) {
-        if (!this.apiKey || cardNumbers.length === 0) return {};
+        if (!this.apiKey || cardNumbers.length === 0) {
+            console.log(`[JustTCG] Skipping batch: apiKey=${!!this.apiKey}, cardNumbers=${cardNumbers.length}`);
+            return {};
+        }
 
         const setSlug = this.slugifySetName(setName);
         const results = {};
@@ -264,16 +267,20 @@ class JustTCGService {
         const normalizeNum = (n) => (n || '').split('/')[0].trim();
         const normalizedNumbers = cardNumbers.map(normalizeNum);
 
+        console.log(`[JustTCG] Batch fetch starting: setName="${setName}", slug="${setSlug}", edition=${edition}, cards=${cardNumbers.length}`);
+        console.log(`[JustTCG] Looking for card numbers:`, normalizedNumbers.slice(0, 10).join(', '), normalizedNumbers.length > 10 ? `... (${normalizedNumbers.length} total)` : '');
+
         // Fetch by set name with pagination (more efficient than individual lookups)
         try {
             let offset = 0;
             const limit = 20; // Free tier limit
             let hasMore = true;
+            let totalCardsReceived = 0;
 
             while (hasMore) {
                 const url = `${this.baseUrl}/cards?game=Pokemon&set=${encodeURIComponent(setSlug)}&limit=${limit}&offset=${offset}&include_price_history=false&include_statistics=true&include_null_prices=false`;
 
-                console.log(`[JustTCG] Batch fetch: set=${setSlug}, offset=${offset}`);
+                console.log(`[JustTCG] Fetching: offset=${offset}`);
                 const resp = await fetch(url, {
                     headers: { 'x-api-key': this.apiKey },
                 });
@@ -282,16 +289,40 @@ class JustTCGService {
                     console.warn('[JustTCG] Rate limited during batch');
                     break;
                 }
-                if (!resp.ok) break;
+                if (!resp.ok) {
+                    const errorText = await resp.text().catch(() => '');
+                    console.warn(`[JustTCG] HTTP ${resp.status}: ${errorText.substring(0, 200)}`);
+                    break;
+                }
 
                 const data = await resp.json();
                 const cards = data.data || [];
+                totalCardsReceived += cards.length;
 
-                for (const card of cards) {
-                    if (card.number && normalizedNumbers.includes(card.number)) {
-                        results[card.number] = this.extractPriceInfo(card, edition);
+                if (offset === 0) {
+                    // Log first card to see API response shape
+                    console.log(`[JustTCG] Got ${cards.length} cards. Total in set: ${data.pagination?.totalItems || '?'}`);
+                    if (cards[0]) {
+                        console.log(`[JustTCG] Sample card: number="${cards[0].number}", name="${cards[0].name}", variants=${cards[0].variants?.length || 0}`);
+                        if (cards[0].variants?.[0]) {
+                            console.log(`[JustTCG] Sample variant: printing="${cards[0].variants[0].printing}", condition="${cards[0].variants[0].condition}", price=${cards[0].variants[0].price}`);
+                        }
                     }
                 }
+
+                let matchedThisPage = 0;
+                for (const card of cards) {
+                    if (card.number && normalizedNumbers.includes(card.number)) {
+                        const priceInfo = this.extractPriceInfo(card, edition);
+                        if (priceInfo) {
+                            results[card.number] = priceInfo;
+                            matchedThisPage++;
+                        } else {
+                            console.log(`[JustTCG] Card #${card.number} matched but extractPriceInfo returned null (edition=${edition}, printings: ${card.variants?.map(v => v.printing).filter((v,i,a) => a.indexOf(v) === i).join(', ')})`);
+                        }
+                    }
+                }
+                if (matchedThisPage > 0) console.log(`[JustTCG] Matched ${matchedThisPage} cards on page offset=${offset}`);
 
                 hasMore = data.pagination?.hasMore || false;
                 offset += limit;
@@ -303,11 +334,12 @@ class JustTCGService {
                     break;
                 }
             }
+            console.log(`[JustTCG] Pagination done: ${totalCardsReceived} total cards received from API`);
         } catch (e) {
             console.warn('[JustTCG] Batch fetch error:', e);
         }
 
-        console.log(`[JustTCG] Batch: got prices for ${Object.keys(results).length} / ${cardNumbers.length} cards`);
+        console.log(`[JustTCG] Batch result: got prices for ${Object.keys(results).length} / ${cardNumbers.length} cards`);
         return results;
     }
 
@@ -633,10 +665,14 @@ class PriceService {
         // PHASE 2: JustTCG batch lookup for remaining misses + condition price enrichment
         const stillMissing = uncachedCards.filter(c => !this.cache[this.getCacheKey(c.name, set.name, c.number)]);
 
+        console.log(`[PriceFetch] Phase 2: apiKey=${!!this.apiKey}, stillMissing=${stillMissing.length}, fetched=${fetched}, edition=${set.edition || 'none'}`);
+
         if (this.apiKey && (stillMissing.length > 0 || fetched > 0)) {
             const cardNumbers = stillMissing.length > 0
                 ? stillMissing.map(c => c.number)
                 : uncachedCards.map(c => c.number);
+
+            console.log(`[PriceFetch] Phase 2: fetching ${cardNumbers.length} cards from JustTCG for set="${set.name}"`);
 
             try {
                 if (onProgress) onProgress(fetched + cached, total, 'Fetching condition prices...');
