@@ -132,25 +132,32 @@ class JustTCGService {
     // Map our internal set names to JustTCG slug format
     // Uses a dynamic cache fetched from the /v1/sets endpoint
     slugifySetName(setName) {
-        // Check dynamic cache first (populated by fetchSetSlugs)
-        if (this._slugCache && this._slugCache[setName]) {
-            return this._slugCache[setName];
+        if (this._slugCache) {
+            // 1) Exact match (e.g. "Base Set (Shadowless)" matches JustTCG's "Base Set (Shadowless)")
+            if (this._slugCache[setName]) {
+                return this._slugCache[setName];
+            }
+            // 2) Try stripping our edition qualifier — "Base Set (1st Edition)" → "Base Set"
+            const stripped = setName.replace(/\s*\(.*?\)\s*/g, '').trim();
+            if (stripped !== setName && this._slugCache[stripped]) {
+                return this._slugCache[stripped];
+            }
         }
 
-        // Override map for non-obvious slugs (with pokemon- prefix based on API format)
+        // Hardcoded fallback for non-obvious slugs (suffix format: {name}-pokemon)
         const SLUG_MAP = {
-            'Base Set (1st Edition)': 'pokemon-base-set',
-            'Base Set (Unlimited)': 'pokemon-base-set',
-            'Base Set (Shadowless)': 'pokemon-base-set',
-            'Expansion Pack': 'pokemon-base-set',
-            'Gold, Silver, to a New World...': 'pokemon-neo-genesis',
-            'Challenge from the Darkness': 'pokemon-neo-discovery',
-            'Pokémon VS': 'pokemon-pokemon-vs',
+            'Base Set (1st Edition)': 'base-set-pokemon',
+            'Base Set (Unlimited)': 'base-set-pokemon',
+            'Base Set (Shadowless)': 'base-set-shadowless-pokemon',
+            'Expansion Pack': 'base-set-pokemon',
+            'Gold, Silver, to a New World...': 'neo-genesis-pokemon',
+            'Challenge from the Darkness': 'neo-discovery-pokemon',
+            'Pokémon VS': 'pokemon-vs-pokemon',
         };
 
         if (SLUG_MAP[setName]) return SLUG_MAP[setName];
 
-        // Default: strip parenthetical qualifiers, prefix with "pokemon-", then slugify
+        // Default: strip parenthetical qualifiers, slugify, append "-pokemon"
         const slug = setName
             .replace(/\s*\(.*?\)\s*/g, '')
             .replace(/^EX\s+/i, '')
@@ -163,7 +170,7 @@ class JustTCGService {
             .replace(/^-|-$/g, '')
             .trim();
 
-        return `pokemon-${slug}`;
+        return `${slug}-pokemon`;
     }
 
     // Fetch all set slugs from JustTCG API and build a name→slug cache
