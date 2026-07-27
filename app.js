@@ -735,8 +735,10 @@ class CollectionStore {
         if (savedChanges) {
             try {
                 this.changes = JSON.parse(savedChanges);
+                // Migrate old set IDs if needed
+                const migrated = this.migrateSetIds();
                 this.applyChanges();
-                console.log('Applied ' + Object.keys(this.changes).length + ' saved changes');
+                console.log('Applied ' + Object.keys(this.changes).length + ' saved changes' + (migrated > 0 ? ` (migrated ${migrated} keys)` : ''));
             } catch (e) {
                 console.warn('Failed to parse saved changes:', e);
                 this.changes = {};
@@ -765,6 +767,103 @@ class CollectionStore {
                 }
             }
         }
+    }
+
+    // Migrate old slug-style set IDs to pokemontcg.io API IDs
+    // Change keys are formatted as: genId/setId/cardIndex/field
+    migrateSetIds() {
+        const OLD_TO_NEW = {
+            "151": "sv3pt5", "ancient-origins": "xy7", "aquapolis": "ecard2",
+            "arceus": "pl4", "astral-radiance": "swsh10", "base-set": "base1",
+            "base-set-1st-edition": "base1", "base-set-2": "base4",
+            "base-set-shadowless": "base1", "base-set-unlimited": "base1",
+            "battle-styles": "swsh5", "black-and-white": "bw1",
+            "black-bolt": "zsv10pt5", "boundaries-crossed": "bw7",
+            "breakpoint": "xy9", "breakthrough": "xy8",
+            "brilliant-stars": "swsh9", "burning-shadows": "sm3",
+            "call-of-legends": "col1", "celebrations": "cel25",
+            "celestial-storm": "sm7", "champions-path": "swsh35",
+            "chilling-reign": "swsh6", "cosmic-eclipse": "sm12",
+            "crimson-invasion": "sm4", "dark-explorers": "bw5",
+            "darkness-ablaze": "swsh3", "destined-rivals": "sv10",
+            "detective-pikachu": "det1", "diamond-pearl": "dp1",
+            "dp-black-star-promos": "dpp", "dragon-majesty": "sm75",
+            "dragons-exalted": "bw6", "emerging-powers": "bw2",
+            "evolutions": "xy12", "evolving-skies": "swsh7",
+            "ex-crystal-guardians": "ex14", "ex-delta-species": "ex11",
+            "ex-deoxys": "ex8", "ex-dragon": "ex3",
+            "ex-dragon-frontiers": "ex15", "ex-emerald": "ex9",
+            "ex-firered-leafgreen": "ex6", "ex-hidden-legends": "ex5",
+            "ex-holon-phantoms": "ex13", "ex-legend-maker": "ex12",
+            "ex-power-keepers": "ex16", "ex-ruby-sapphire": "ex1",
+            "ex-sandstorm": "ex2", "ex-team-magma-vs-team-aqua": "ex4",
+            "ex-team-rocket-returns": "ex7", "ex-unseen-forces": "ex10",
+            "expedition-base-set": "ecard1", "fates-collide": "xy10",
+            "flashfire": "xy2", "forbidden-light": "sm6",
+            "fossil": "base3", "furious-fists": "xy3",
+            "fusion-strike": "swsh8", "generations": "g1",
+            "great-encounters": "dp4", "guardians-rising": "sm2",
+            "gym-challenge": "gym2", "gym-heroes": "gym1",
+            "heartgold-and-soulsilver": "hgss1", "heartgold-soulsilver": "hgss1",
+            "hidden-fates": "sm115", "journey-together": "sv9",
+            "jungle": "base2", "kalos-starter-set": "xy0",
+            "legendary-collection": "base6", "legendary-treasures": "bw11",
+            "legends-awakened": "dp6", "lost-origin": "swsh11",
+            "lost-thunder": "sm8", "majestic-dawn": "dp5",
+            "mysterious-treasures": "dp2", "neo-destiny": "neo4",
+            "neo-discovery": "neo2", "neo-genesis": "neo1",
+            "neo-revelation": "neo3", "next-destinies": "bw4",
+            "nintendo-black-star-promos": "np", "noble-victories": "bw3",
+            "obsidian-flames": "sv3", "paldea-evolved": "sv2",
+            "paldean-fates": "sv4pt5", "paradox-rift": "sv4",
+            "phantom-forces": "xy4", "plasma-blast": "bw10",
+            "plasma-freeze": "bw9", "plasma-storm": "bw8",
+            "platinum": "pl1", "primal-clash": "xy5",
+            "rebel-clash": "swsh2", "rising-rivals": "pl2",
+            "roaring-skies": "xy6", "scarlet-violet": "sv1",
+            "secret-wonders": "dp3", "shining-fates": "swsh45",
+            "shining-legends": "sm35", "shrouded-fable": "sv6pt5",
+            "silver-tempest": "swsh12", "skyridge": "ecard3",
+            "southern-islands": "si1", "steam-siege": "xy11",
+            "stellar-crown": "sv7", "stormfront": "dp7",
+            "supreme-victors": "pl3", "surging-sparks": "sv8",
+            "team-rocket": "base5", "team-up": "sm9",
+            "temporal-forces": "sv5", "twilight-masquerade": "sv6",
+            "ultra-prism": "sm5", "unbroken-bonds": "sm10",
+            "unified-minds": "sm11", "vivid-voltage": "swsh4",
+            "white-flare": "rsv10pt5", "wizards-black-star-promos": "basep",
+            "hgss-promos": "hsp",
+        };
+
+        if (localStorage.getItem('set_ids_migrated_v2')) return 0;
+
+        let migrated = 0;
+        const newChanges = {};
+        for (const key in this.changes) {
+            const parts = key.split('/');
+            if (parts.length >= 4) {
+                const setId = parts[1];
+                if (OLD_TO_NEW[setId]) {
+                    parts[1] = OLD_TO_NEW[setId];
+                    const newKey = parts.join('/');
+                    newChanges[newKey] = this.changes[key];
+                    migrated++;
+                } else {
+                    newChanges[key] = this.changes[key];
+                }
+            } else {
+                newChanges[key] = this.changes[key];
+            }
+        }
+
+        if (migrated > 0) {
+            this.changes = newChanges;
+            this.save();
+            console.log(`[Migration] Remapped ${migrated} change keys from old set IDs to new API IDs`);
+        }
+
+        localStorage.setItem('set_ids_migrated_v2', 'true');
+        return migrated;
     }
 
     save() {
