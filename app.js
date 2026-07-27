@@ -592,7 +592,8 @@ class PriceService {
         const normalizeNumber = (n) => (n || '').split('/')[0].trim();
 
         // Skip Phase 1 for 1st Edition and Shadowless — pokemontcg.io only has Unlimited pricing
-        const skipPhase1 = set.edition && (set.edition === '1st' || set.edition === 'shadowless');
+        // But only skip if JustTCG API key is available (otherwise use pokemontcg.io as fallback)
+        const skipPhase1 = this.apiKey && set.edition && (set.edition === '1st' || set.edition === 'shadowless');
 
         if (set.id && !skipPhase1) {
             try {
