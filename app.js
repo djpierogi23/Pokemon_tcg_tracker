@@ -309,8 +309,8 @@ class JustTCGService {
 
         const setSlug = this.slugifySetName(setName);
         const results = {};
-        // Normalize card numbers: "4/102" -> "4" for matching with API results
-        const normalizeNum = (n) => (n || '').split('/')[0].trim();
+        // Normalize card numbers: "004/102" -> "4", "4/102" -> "4" for matching
+        const normalizeNum = (n) => (n || '').split('/')[0].replace(/^0+/, '').trim() || '0';
         const normalizedNumbers = cardNumbers.map(normalizeNum);
 
         console.log(`[JustTCG] Batch fetch starting: setName="${setName}", slug="${setSlug}", edition=${edition}, cards=${cardNumbers.length}`);
@@ -354,7 +354,7 @@ class JustTCGService {
 
                 if (offset === 0) {
                     // Log first card to see API response shape
-                    console.log(`[JustTCG] Got ${cards.length} cards. Total in set: ${data.pagination?.totalItems || '?'}`);
+                    console.log(`[JustTCG] Got ${cards.length} cards. Total in set: ${data.meta?.total || data.pagination?.totalItems || '?'}`);
                     if (cards.length === 0) {
                         console.log(`[JustTCG] Empty response. Full data:`, JSON.stringify(data).substring(0, 500));
                     }
@@ -368,23 +368,24 @@ class JustTCGService {
 
                 let matchedThisPage = 0;
                 for (const card of cards) {
-                    if (card.number && normalizedNumbers.includes(card.number)) {
+                    const apiNum = normalizeNum(card.number);
+                    if (apiNum && normalizedNumbers.includes(apiNum)) {
                         const priceInfo = this.extractPriceInfo(card, edition);
                         if (priceInfo) {
-                            results[card.number] = priceInfo;
+                            results[apiNum] = priceInfo;
                             matchedThisPage++;
                         } else {
-                            console.log(`[JustTCG] Card #${card.number} matched but extractPriceInfo returned null (edition=${edition}, printings: ${card.variants?.map(v => v.printing).filter((v,i,a) => a.indexOf(v) === i).join(', ')})`);
+                            console.log(`[JustTCG] Card #${card.number} (norm=${apiNum}) matched but extractPriceInfo returned null (edition=${edition}, printings: ${card.variants?.map(v => v.printing).filter((v,i,a) => a.indexOf(v) === i).join(', ')})`);
                         }
                     }
                 }
                 if (matchedThisPage > 0) console.log(`[JustTCG] Matched ${matchedThisPage} cards on page offset=${offset}`);
 
-                hasMore = data.pagination?.hasMore || false;
+                hasMore = data.meta?.hasMore || data.pagination?.hasMore || false;
                 offset += limit;
 
                 // Check remaining quota
-                const remaining = data.usage?.apiDailyRequestsRemaining;
+                const remaining = data._metadata?.apiDailyRequestsRemaining ?? data.usage?.apiDailyRequestsRemaining;
                 if (remaining !== undefined && remaining < 5) {
                     console.warn(`[JustTCG] Low quota: ${remaining} daily requests remaining`);
                     break;
@@ -736,8 +737,8 @@ class PriceService {
 
                 for (const card of (stillMissing.length > 0 ? stillMissing : uncachedCards)) {
                     const cacheKey = this.getCacheKey(card.name, set.name, card.number);
-                    // JustTCG returns card.number as "4" but ours may be "4/102"
-                    const normalizedNum = (card.number || '').split('/')[0].trim();
+                    // JustTCG results are keyed by normalized number (leading zeros stripped)
+                    const normalizedNum = (card.number || '').split('/')[0].replace(/^0+/, '').trim() || '0';
                     const jtcgResult = justTCGResults[normalizedNum] || justTCGResults[card.number];
 
                     if (jtcgResult) {
