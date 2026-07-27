@@ -572,6 +572,16 @@ class PriceService {
 
         if (total === 0) return { success: true, fetched: 0, cached: 0, total: set.cards.length };
 
+        // Invalidate stale cache for edition sets (old cache had wrong prices from pokemontcg.io)
+        if (set.edition) {
+            for (const card of haveCards) {
+                const cacheKey = this.getCacheKey(card.name, set.name, card.number);
+                if (this.cache[cacheKey] && !this.cache[cacheKey].editionFiltered) {
+                    delete this.cache[cacheKey];
+                }
+            }
+        }
+
         // Count already-cached cards
         const uncachedCards = [];
         for (const card of haveCards) {
@@ -605,6 +615,7 @@ class PriceService {
                     const apiNumber = normalizeNumber(card.number);
                     if (bulkHits[apiNumber] || bulkHits[card.number]) {
                         this.cache[cacheKey] = bulkHits[apiNumber] || bulkHits[card.number];
+                        if (set.edition) this.cache[cacheKey].editionFiltered = true;
                         fetched++;
                     }
                 }
@@ -637,9 +648,11 @@ class PriceService {
                             this.cache[cacheKey].conditionPrices = jtcgResult.conditionPrices;
                             this.cache[cacheKey].priceChanges = jtcgResult.priceChanges;
                             this.cache[cacheKey].source = 'pokemontcg+justtcg';
+                            if (set.edition) this.cache[cacheKey].editionFiltered = true;
                         } else {
                             // Use JustTCG as the sole price source for this card
                             this.cache[cacheKey] = jtcgResult;
+                            if (set.edition) this.cache[cacheKey].editionFiltered = true;
                             fetched++;
                         }
                     }
