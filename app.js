@@ -638,8 +638,9 @@ class PriceService {
         const priceMap = {};
         let page = 1;
         const edition = set.edition || null;
+        const apiSetId = set.apiSetId || set.id;
         while (true) {
-            const url = `https://api.pokemontcg.io/v2/cards?q=set.id:${set.id}&pageSize=250&page=${page}&select=name,number,tcgplayer,images`;
+            const url = `https://api.pokemontcg.io/v2/cards?q=set.id:${apiSetId}&pageSize=250&page=${page}&select=name,number,tcgplayer,images`;
             console.log(`[PriceFetch] Bulk fetch: ${url}` + (edition ? ` (edition: ${edition})` : ''));
             const resp = await fetch(url);
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -884,6 +885,35 @@ class CollectionStore {
         }
 
         localStorage.setItem('set_ids_migrated_v2', 'true');
+
+        // V3 migration: split base1 keys into variant-specific IDs
+        if (!localStorage.getItem('set_ids_migrated_v3')) {
+            const variantIds = ['base1-1st', 'base1-shadowless', 'base1-unlimited'];
+            let splitCount = 0;
+            const splitChanges = {};
+            for (const key in this.changes) {
+                const parts = key.split('/');
+                if (parts.length >= 4 && parts[1] === 'base1') {
+                    // Duplicate to all 3 variants (can't determine which one it belongs to)
+                    for (const vid of variantIds) {
+                        const newParts = [...parts];
+                        newParts[1] = vid;
+                        splitChanges[newParts.join('/')] = this.changes[key];
+                    }
+                    splitCount++;
+                } else {
+                    splitChanges[key] = this.changes[key];
+                }
+            }
+            if (splitCount > 0) {
+                this.changes = splitChanges;
+                this.save();
+                migrated += splitCount;
+                console.log(`[Migration V3] Split ${splitCount} base1 keys into 3 variant sets`);
+            }
+            localStorage.setItem('set_ids_migrated_v3', 'true');
+        }
+
         return migrated;
     }
 

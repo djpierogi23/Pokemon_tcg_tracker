@@ -2776,7 +2776,7 @@ const COLLECTION_DATA = {
           ]
         },
         {
-          "id": "base1",
+          "id": "base1-1st",
           "name": "Base Set (1st Edition)",
           "sheetName": "Base Set (1st Edition)",
           "releaseDate": "1999-01-09",
@@ -4516,10 +4516,11 @@ const COLLECTION_DATA = {
               "condition": "MP"
             }
           ],
-          "edition": "1st"
+          "edition": "1st",
+          "apiSetId": "base1"
         },
         {
-          "id": "base1",
+          "id": "base1-shadowless",
           "name": "Base Set (Shadowless)",
           "sheetName": "Base Set (Shadowless)",
           "releaseDate": "1999-01-09",
@@ -6259,10 +6260,11 @@ const COLLECTION_DATA = {
               "condition": "MP"
             }
           ],
-          "edition": "shadowless"
+          "edition": "shadowless",
+          "apiSetId": "base1"
         },
         {
-          "id": "base1",
+          "id": "base1-unlimited",
           "name": "Base Set (Unlimited)",
           "sheetName": "Base Set",
           "releaseDate": "1999-01-09",
@@ -8002,7 +8004,8 @@ const COLLECTION_DATA = {
               "condition": "MP"
             }
           ],
-          "edition": "unlimited"
+          "edition": "unlimited",
+          "apiSetId": "base1"
         },
         {
           "id": "base-set-japanese",
