@@ -309,6 +309,13 @@ class JustTCGService {
         console.log(`[JustTCG] Batch fetch starting: setName="${setName}", slug="${setSlug}", edition=${edition}, cards=${cardNumbers.length}`);
         console.log(`[JustTCG] Looking for card numbers:`, normalizedNumbers.slice(0, 10).join(', '), normalizedNumbers.length > 10 ? `... (${normalizedNumbers.length} total)` : '');
 
+        // Debug: show slug cache entries matching this set
+        if (this._slugCache) {
+            const matching = Object.entries(this._slugCache).filter(([k, v]) =>
+                k.toLowerCase().includes('base') || v.includes('base'));
+            console.log(`[JustTCG] Slug cache entries with "base":`, matching);
+        }
+
         // Fetch by set name with pagination (more efficient than individual lookups)
         try {
             let offset = 0;
@@ -341,6 +348,9 @@ class JustTCGService {
                 if (offset === 0) {
                     // Log first card to see API response shape
                     console.log(`[JustTCG] Got ${cards.length} cards. Total in set: ${data.pagination?.totalItems || '?'}`);
+                    if (cards.length === 0) {
+                        console.log(`[JustTCG] Empty response. Full data:`, JSON.stringify(data).substring(0, 500));
+                    }
                     if (cards[0]) {
                         console.log(`[JustTCG] Sample card: number="${cards[0].number}", name="${cards[0].name}", variants=${cards[0].variants?.length || 0}`);
                         if (cards[0].variants?.[0]) {
