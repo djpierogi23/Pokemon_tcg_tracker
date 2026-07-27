@@ -353,8 +353,13 @@ class JustTCGService {
                     }
                     if (cards[0]) {
                         console.log(`[JustTCG] Sample card: number="${cards[0].number}", name="${cards[0].name}", variants=${cards[0].variants?.length || 0}`);
-                        if (cards[0].variants?.[0]) {
-                            console.log(`[JustTCG] Sample variant: printing="${cards[0].variants[0].printing}", condition="${cards[0].variants[0].condition}", price=${cards[0].variants[0].price}`);
+                        // Log ALL variants to understand edition/printing structure
+                        const sampleCard = cards.find(c => (c.variants?.length || 0) > 2) || cards[0];
+                        if (sampleCard.variants) {
+                            console.log(`[JustTCG] ALL variants for "${sampleCard.name}" (#${sampleCard.number}):`);
+                            for (const v of sampleCard.variants) {
+                                console.log(`  printing="${v.printing}", condition="${v.condition}", price=${v.price}`);
+                            }
                         }
                     }
                 }
