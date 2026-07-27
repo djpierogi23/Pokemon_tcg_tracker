@@ -112,18 +112,265 @@ function getCardThumbnail(setName, cardNumber) {
 }
 
 // =============================================
-// PRICE SERVICE (PokéWallet API)
+// JUSTTCG SERVICE (justtcg.com API)
+// =============================================
+class JustTCGService {
+    constructor() {
+        this.apiKey = localStorage.getItem('justtcg_api_key') || '';
+        this.baseUrl = 'https://api.justtcg.com/v1';
+    }
+
+    setApiKey(key) {
+        this.apiKey = key;
+        localStorage.setItem('justtcg_api_key', key);
+    }
+
+    getApiKey() {
+        return this.apiKey;
+    }
+
+    // Map our internal set names to JustTCG slug format
+    slugifySetName(setName) {
+        // Override map for non-obvious slugs
+        const SLUG_MAP = {
+            'Base Set (1st Edition)': 'base-set',
+            'Base Set (Unlimited)': 'base-set',
+            'Base Set (Shadowless)': 'base-set',
+            'Expansion Pack': 'base-set',
+            'Gold, Silver, to a New World...': 'neo-genesis',
+            'Challenge from the Darkness': 'neo-discovery',
+            'Pokémon VS': 'pokemon-vs',
+            'EX Ruby & Sapphire': 'ruby-sapphire',
+            'EX Sandstorm': 'sandstorm',
+            'EX Dragon': 'dragon',
+            'EX Hidden Legends': 'hidden-legends',
+            'EX FireRed & LeafGreen': 'firered-leafgreen',
+            'EX Team Rocket Returns': 'team-rocket-returns',
+            'EX Deoxys': 'deoxys',
+            'EX Emerald': 'emerald',
+            'EX Unseen Forces': 'unseen-forces',
+            'EX Delta Species': 'delta-species',
+            'EX Legend Maker': 'legend-maker',
+            'EX Holon Phantoms': 'holon-phantoms',
+            'EX Crystal Guardians': 'crystal-guardians',
+            'EX Dragon Frontiers': 'dragon-frontiers',
+            'EX Power Keepers': 'power-keepers',
+            'EX Team Magma vs Team Aqua': 'team-magma-vs-team-aqua',
+            'Diamond & Pearl': 'diamond-pearl',
+            'HeartGold and SoulSilver': 'heartgold-soulsilver',
+            'Golden Sky, Silvery Ocean': 'heartgold-soulsilver',
+            'X and Y': 'xy',
+            'Sun and Moon': 'sun-moon',
+            'Sword and Shield': 'sword-shield',
+            'Scarlet & Violet': 'scarlet-violet',
+            '151': '151',
+            'SV2a: Pokemon Card 151': '151',
+            'SV5K: Wild Force': 'wild-force',
+            'SV5M: Cyber Judge': 'cyber-judge',
+            'SV8a: Terastal Fest ex': 'terastal-fest-ex',
+            'Prismatic Evolution': 'prismatic-evolutions',
+        };
+
+        if (SLUG_MAP[setName]) return SLUG_MAP[setName];
+
+        // Strip parenthetical qualifiers, then slugify
+        return setName
+            .replace(/\s*\(.*?\)\s*/g, '')
+            .replace(/^EX\s+/i, '')
+            .toLowerCase()
+            .replace(/[&]/g, 'and')
+            .replace(/['']/g, '')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '')
+            .trim();
+    }
+
+    // Map JustTCG condition names to our condition keys
+    static CONDITION_MAP = {
+        'Near Mint': 'NM',
+        'Lightly Played': 'LP',
+        'Moderately Played': 'MP',
+        'Heavily Played': 'HP',
+        'Damaged': 'DMG',
+    };
+
+    // Map JustTCG printing names to our variant names
+    static PRINTING_MAP = {
+        'Normal': 'Normal',
+        'Holo': 'Holofoil',
+        'Foil': 'Holofoil',
+        'Reverse Holo': 'Reverse Holofoil',
+        '1st Edition': '1st Edition',
+        '1st Edition Holo': '1st Edition Holofoil',
+    };
+
+    // Fetch prices for a single card by set + number
+    async fetchCardPrice(setName, cardNumber) {
+        if (!this.apiKey) return null;
+
+        const setSlug = this.slugifySetName(setName);
+        const url = `${this.baseUrl}/cards?game=Pokemon&set=${encodeURIComponent(setSlug)}&number=${encodeURIComponent(cardNumber)}&include_price_history=false&include_statistics=false&include_null_prices=false`;
+
+        try {
+            const resp = await fetch(url, {
+                headers: { 'x-api-key': this.apiKey },
+            });
+
+            if (resp.status === 429) {
+                console.warn('[JustTCG] Rate limited');
+                return { rateLimited: true };
+            }
+            if (resp.status === 401) {
+                console.warn('[JustTCG] Invalid API key');
+                return { invalidKey: true };
+            }
+            if (!resp.ok) {
+                console.warn(`[JustTCG] HTTP ${resp.status}`);
+                return null;
+            }
+
+            const data = await resp.json();
+            const cards = data.data || [];
+            if (cards.length === 0) return null;
+
+            return this.extractPriceInfo(cards[0]);
+        } catch (e) {
+            console.warn('[JustTCG] Fetch error:', e);
+            return null;
+        }
+    }
+
+    // Batch fetch prices for multiple cards
+    async batchFetchPrices(setName, cardNumbers) {
+        if (!this.apiKey || cardNumbers.length === 0) return {};
+
+        const setSlug = this.slugifySetName(setName);
+        const results = {};
+
+        // Fetch by set name with pagination (more efficient than individual lookups)
+        try {
+            let offset = 0;
+            const limit = 20; // Free tier limit
+            let hasMore = true;
+
+            while (hasMore) {
+                const url = `${this.baseUrl}/cards?game=Pokemon&set=${encodeURIComponent(setSlug)}&limit=${limit}&offset=${offset}&include_price_history=false&include_statistics=true&include_null_prices=false`;
+
+                console.log(`[JustTCG] Batch fetch: set=${setSlug}, offset=${offset}`);
+                const resp = await fetch(url, {
+                    headers: { 'x-api-key': this.apiKey },
+                });
+
+                if (resp.status === 429) {
+                    console.warn('[JustTCG] Rate limited during batch');
+                    break;
+                }
+                if (!resp.ok) break;
+
+                const data = await resp.json();
+                const cards = data.data || [];
+
+                for (const card of cards) {
+                    if (card.number && cardNumbers.includes(card.number)) {
+                        results[card.number] = this.extractPriceInfo(card);
+                    }
+                }
+
+                hasMore = data.pagination?.hasMore || false;
+                offset += limit;
+
+                // Check remaining quota
+                const remaining = data.usage?.apiDailyRequestsRemaining;
+                if (remaining !== undefined && remaining < 5) {
+                    console.warn(`[JustTCG] Low quota: ${remaining} daily requests remaining`);
+                    break;
+                }
+            }
+        } catch (e) {
+            console.warn('[JustTCG] Batch fetch error:', e);
+        }
+
+        console.log(`[JustTCG] Batch: got prices for ${Object.keys(results).length} / ${cardNumbers.length} cards`);
+        return results;
+    }
+
+    // Extract condition-specific pricing from JustTCG card data
+    extractPriceInfo(card) {
+        const conditionPrices = {};  // { "Holofoil": { "NM": 12.50, "LP": 10.80, ... }, ... }
+        const priceChanges = {};
+        let bestMarket = null;
+        let bestLow = null;
+
+        if (!card.variants || !Array.isArray(card.variants)) {
+            return null;
+        }
+
+        for (const variant of card.variants) {
+            if (variant.price === null || variant.price === undefined) continue;
+
+            const printing = JustTCGService.PRINTING_MAP[variant.printing] || variant.printing || 'Normal';
+            const condition = JustTCGService.CONDITION_MAP[variant.condition] || 'NM';
+
+            if (!conditionPrices[printing]) {
+                conditionPrices[printing] = {};
+            }
+            conditionPrices[printing][condition] = variant.price;
+
+            // Track best NM price as primary market price
+            if (condition === 'NM' && (bestMarket === null || variant.price > bestMarket)) {
+                bestMarket = variant.price;
+                // Capture price changes from the first NM variant
+                if (variant.priceChange24hr !== undefined) priceChanges['24h'] = variant.priceChange24hr;
+                if (variant.priceChange7d !== undefined) priceChanges['7d'] = variant.priceChange7d;
+                if (variant.priceChange30d !== undefined) priceChanges['30d'] = variant.priceChange30d;
+            }
+
+            // Track lowest price across all conditions
+            if (bestLow === null || variant.price < bestLow) {
+                bestLow = variant.price;
+            }
+        }
+
+        if (Object.keys(conditionPrices).length === 0) return null;
+
+        // Also build variantPrices in the format our existing code expects
+        const variantPrices = {};
+        for (const [printing, conditions] of Object.entries(conditionPrices)) {
+            if (conditions['NM'] !== undefined) {
+                variantPrices[printing] = { market: conditions['NM'], low: conditions['DMG'] || conditions['HP'] || null };
+            }
+        }
+
+        return {
+            market: bestMarket,
+            low: bestLow,
+            variantPrices,
+            conditionPrices,
+            priceChanges: Object.keys(priceChanges).length > 0 ? priceChanges : null,
+            tcgplayerUrl: null,  // JustTCG doesn't provide TCGPlayer URLs
+            source: 'justtcg',
+            fetchedAt: Date.now(),
+        };
+    }
+}
+
+// =============================================
+// PRICE SERVICE
 // =============================================
 class PriceService {
     constructor() {
-        this.apiKey = localStorage.getItem('pokewallet_api_key') || '';
+        this.apiKey = localStorage.getItem('justtcg_api_key') || '';
+        this.justTCG = new JustTCGService();
         this.cache = {};
         this.loadCache();
     }
 
     setApiKey(key) {
         this.apiKey = key;
-        localStorage.setItem('pokewallet_api_key', key);
+        localStorage.setItem('justtcg_api_key', key);
+        this.justTCG.setApiKey(key);
     }
 
     getApiKey() {
@@ -225,440 +472,10 @@ class PriceService {
         return count;
     }
 
-    async fetchCardPrice(cardName, setName, cardNumber, setId) {
-        if (!this.apiKey) return null;
-
-        const cacheKey = this.getCacheKey(cardName, setName, cardNumber);
-        if (this.cache[cacheKey]) return this.cache[cacheKey];
-
-        try {
-            // Strip parenthetical qualifiers from set name
-            let cleanSetName = setName.replace(/\s*\(.*?\)\s*/g, '').trim();
-            // Clean card name: transliterate accents (é→e), strip remaining unicode (δ, ★)
-            let cleanCardName = cardName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\x00-\x7F]/g, '').replace(/['']/g, "'").trim();
-            // Strip leading underscores/blanks (e.g. "_____'s Pikachu" → "Pikachu")
-            cleanCardName = cleanCardName.replace(/^[_]+(?:'s\s+)?/, '').trim();
-
-            // Use mapped API set name if available, otherwise strip EX prefix
-            const SET_QUERY_MAP = {
-                // Gen 1 — Base Set variants
-                'Base Set (1st Edition)': 'Base Set',
-                'Base Set (Unlimited)': 'Base Set',
-                'Base Set (Shadowless)': 'Base Set',
-                'Expansion Pack': 'Base Set',
-                'Wizards Black Star Promos': 'Wizards Black Star Promos',
-                'Vending Series 1': 'Vending Machine cards',
-                'Vending Series 2': 'Vending Machine cards',
-                'Vending Series 3': 'Vending Machine cards',
-                // Gen 2
-                'Gold, Silver, to a New World...': 'Neo Genesis',
-                'Challenge from the Darkness': 'Neo Discovery',
-                'Pokémon VS': 'Pokemon VS',
-                // Gen 3 — EX-era (API drops "EX" prefix)
-                'EX Ruby & Sapphire': 'Ruby Sapphire',
-                'EX Sandstorm': 'Sandstorm',
-                'EX Dragon': 'Dragon',
-                'EX Hidden Legends': 'Hidden Legends',
-                'EX FireRed & LeafGreen': 'FireRed LeafGreen',
-                'EX Team Rocket Returns': 'Team Rocket Returns',
-                'EX Deoxys': 'Deoxys',
-                'EX Emerald': 'Emerald',
-                'EX Unseen Forces': 'Unseen Forces',
-                'EX Delta Species': 'Delta Species',
-                'EX Legend Maker': 'Legend Maker',
-                'EX Holon Phantoms': 'Holon Phantoms',
-                'EX Crystal Guardians': 'Crystal Guardians',
-                'EX Dragon Frontiers': 'Dragon Frontiers',
-                'EX Power Keepers': 'Power Keepers',
-                'EX Team Magma vs Team Aqua': 'Team Magma vs Team Aqua',
-                'Nintendo Black Star Promos': 'Nintendo Promos',
-                'Best of Game': 'Best of Game Promo',
-                'EX Trainer Kit Latias': 'EX Trainer Kit Latias',
-                'EX Trainer Kit Latios': 'EX Trainer Kit Latios',
-                'EX Trainer Kit 2 Plusle': 'EX Trainer Kit 2 Plusle',
-                'EX Trainer Kit 2 Minun': 'EX Trainer Kit 2 Minun',
-                // Gen 4 — DP / HGSS
-                'Diamond & Pearl': 'Diamond Pearl',
-                'HeartGold and SoulSilver': 'HeartGold SoulSilver',
-                'DP Black Star Promos': 'Diamond Pearl Promos',
-                'DP Trainer Kit: Manaphy & Lucario': 'DP Trainer Kit',
-                'Golden Sky, Silvery Ocean': 'HeartGold SoulSilver',
-                'HGSS Trainer Kit: Gyarados & Raichu': 'HGSS Trainer Kit',
-                'HGSS Promos': 'HGSS Promos',
-                // Gen 5 — BW
-                'Black and White': 'Black White',
-                "McDonald's Collection 2011": 'McDonalds Collection 2011',
-                'McDonalds Collection 2012': 'McDonalds Collection 2012',
-                // Gen 6 — XY
-                'X and Y': 'XY Base Set',
-                'X and Y Black Star Promos': 'XY Promos',
-                'Kalos Starter Set': 'Kalos Starter Set',
-                'XY Trainer Kit: Bisharp & Wigglytuff': 'XY Trainer Kit',
-                "McDonald's Collection 2014": 'McDonalds Collection 2014',
-                'XY Trainer Kit: Latias & Latios': 'XY Trainer Kit Latias',
-                "McDonald's Collection 2015": 'McDonalds Collection 2015',
-                'XY Trainer Kit: Pikachu Libre & Suicune': 'XY Trainer Kit Pikachu Libre',
-                // Gen 7 — SM
-                'Sun and Moon': 'SM Base Set',
-                'Sun and Moon Black Star Promos': 'SM Promos',
-                'Shining Legends': 'Shining Legends',
-                'Dragon Majesty': 'Dragon Majesty',
-                'Detective Pikachu': 'Detective Pikachu',
-                'Hidden Fates': 'Hidden Fates',
-                // Gen 8 — SWSH
-                'Sword and Shield': 'Sword Shield',
-                'Sword and Shield Promos': 'Sword Shield Promos',
-                "Champion's Path": 'Champions Path',
-                'Shining Fates': 'Shining Fates',
-                'Celebrations': 'Celebrations',
-                'Pokemon GO': 'Pokemon GO',
-                'Crown Zenith': 'Crown Zenith',
-                "McDonald's 25th Anniversary Promos": 'McDonalds 25th Anniversary',
-                "McDonald's Collection 2652": 'McDonalds 25th Anniversary',
-                // Gen 9 — SV
-                'Scarlet & Violet': 'Scarlet Violet',
-                '151': 'Scarlet Violet 151',
-                'SV2a: Pokemon Card 151': 'Pokemon Card 151',
-                'SV5K: Wild Force': 'Wild Force',
-                'SV5M: Cyber Judge': 'Cyber Judge',
-                'SV8a: Terastal Fest ex': 'Terastal Fest',
-                'Prismatic Evolution': 'Prismatic Evolutions',
-                // POP Series
-                'POP Series 1': 'POP Series 1',
-                'POP Series 2': 'POP Series 2',
-                'Pop Series 3': 'POP Series 3',
-                'Pop Series 4': 'POP Series 4',
-                'POP Series 5': 'POP Series 5',
-                'POP Series 6': 'POP Series 6',
-                'POP Series 7': 'POP Series 7',
-                'Pop Series 8': 'POP Series 8',
-                'Pop Series 9': 'POP Series 9',
-            };
-            const querySetName = SET_QUERY_MAP[setName] || cleanSetName.replace(/^EX\s+/i, '').trim();
-
-            // Build a list of query variants to try (most specific → least specific)
-            const queries = [];
-            const baseQuery = (cleanCardName + ' ' + querySetName).replace(/&/g, 'and').replace(/[()]/g, '').replace(/\s+/g, ' ').trim();
-            
-            if (querySetName.toLowerCase().includes('promo') && cardNumber) {
-                // For promos, include the card number in queries for disambiguation
-                // Try set-specific query with number first (best for Wizards/Nintendo/DP promos)
-                const setKeywords = querySetName.replace(/promos?$/i, '').trim();
-                // TCGPlayer names duplicate promos as "Pikachu (4)", "Eevee (11)" etc.
-                const nameWithNum = cleanCardName + ' (' + cardNumber + ')';
-                queries.push((cleanCardName + ' ' + setKeywords + ' ' + cardNumber).replace(/\s+/g, ' ').trim());
-                queries.push((cleanCardName + ' promo ' + cardNumber).trim());
-                // Try WOTC-specific queries (TCGPlayer uses "wotc promo" as the set name)
-                if (setKeywords.toLowerCase().includes('wizards') || setKeywords.toLowerCase().includes('black star')) {
-                    queries.push((nameWithNum + ' wotc promo').trim());
-                    queries.push((cleanCardName + ' wotc promo ' + cardNumber).trim());
-                    queries.push((cleanCardName + ' wotc promo').trim());
-                    queries.push(('wotc promo ' + cardNumber).trim());
-                    queries.push((cleanCardName + ' Black Star Promo').trim());
-                }
-                // Generic promo with parenthesized number
-                queries.push((nameWithNum + ' promo').trim());
-                queries.push(baseQuery);
-                queries.push((cleanCardName + ' ' + cardNumber).trim());
-                queries.push(cleanCardName);
-            } else {
-                queries.push(baseQuery);
-                // Also try with just the card name + shorter set identifier
-                const setWords = querySetName.split(' ');
-                if (setWords.length > 2) {
-                    queries.push((cleanCardName + ' ' + setWords.slice(-2).join(' ')).replace(/\s+/g, ' ').trim());
-                }
-                // Fallback: just card name
-                if (queries.length < 3) {
-                    queries.push(cleanCardName);
-                }
-            }
-
-
-            let pokewalletRateLimited = false;
-            for (const q of queries) {
-                console.log(`[PriceFetch] Trying: "${q}"`);
-                const response = await fetch(`https://api.pokewallet.io/search?q=${encodeURIComponent(q)}&limit=50`, {
-                    headers: { 'X-API-Key': this.apiKey },
-                });
-
-                if (response.status === 429) {
-                    console.warn('PokéWallet rate limit reached — will try fallback');
-                    pokewalletRateLimited = true;
-                    break;
-                }
-                if (!response.ok) continue;
-
-                const data = await response.json();
-                const results = data.results || data.data || data;
-                console.log(`[PriceFetch] Results: ${Array.isArray(results) ? results.length : 'none'}`);
-
-                if (Array.isArray(results) && results.length > 0) {
-                    const card = this.findBestMatch(results, cardName, setName, cardNumber);
-                    if (card) {
-                        console.log(`[PriceFetch] Matched: ${card.card_info?.name} in ${card.card_info?.set_name}`);
-                        const priceInfo = this.extractPrice(card);
-                        this.cache[cacheKey] = priceInfo;
-                        this.saveCache();
-                        return priceInfo;
-                    }
-                }
-            }
-
-
-            // If PokéWallet was rate-limited and fallback didn't help, signal it
-            if (pokewalletRateLimited) {
-                return { rateLimited: true };
-            }
-
-            return null;
-        } catch (e) {
-            console.warn('Price fetch failed:', e);
-            return null;
-        }
-    }
-
-    findBestMatch(results, cardName, setName, cardNumber) {
-        // Normalize a string for comparison
-        const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const stripParens = (s) => s.replace(/\s*\(.*?\)\s*/g, '').trim();
-        const stripPrefix = (s) => s.replace(/^EX\s+/i, '').trim();
-        const targetSet = norm(setName);
-        const targetSetBase = norm(stripPrefix(stripParens(setName)));
-        // Strip leading underscores/blanks before normalizing (e.g. "_____'s Pikachu" → "Pikachu")
-        const cleanedCardName = cardName.replace(/^[_]+(?:'s\s+)?/, '').trim();
-        const targetCard = norm(cleanedCardName);
-        // Normalize card number: strip leading zeros, e.g. "06/64" → "6/64"
-        const normNum = (n) => (n || '').replace(/^0+/, '').toLowerCase();
-        const targetNum = normNum(cardNumber || '');
-
-        // Known API set name mappings for our internal names
-        const SET_API_MAP = {
-            // Gen 1
-            'Base Set (1st Edition)': 'Base Set (Shadowless)',
-            'Base Set (Unlimited)': 'Base Set',
-            'Base Set (Shadowless)': 'Base Set (Shadowless)',
-            'Expansion Pack': 'Base Set',
-            'Wizards Black Star Promos': 'Wizards Black Star Promos',
-            'Vending Series 1': 'Vending Machine cards Series 1 (Blue)',
-            'Vending Series 2': 'Vending Machine cards Series 2 (Red)',
-            'Vending Series 3': 'Vending Machine cards Series 3 (Green)',
-            // Gen 2
-            'Gold, Silver, to a New World...': 'Neo Genesis',
-            'Challenge from the Darkness': 'Neo Discovery',
-            'Pokémon VS': 'Pokemon VS',
-            // Gen 3 — EX-era
-            'EX Ruby & Sapphire': 'Ruby and Sapphire',
-            'EX Sandstorm': 'Sandstorm',
-            'EX Dragon': 'Dragon',
-            'EX Hidden Legends': 'Hidden Legends',
-            'EX FireRed & LeafGreen': 'FireRed & LeafGreen',
-            'EX Team Rocket Returns': 'Team Rocket Returns',
-            'EX Deoxys': 'Deoxys',
-            'EX Emerald': 'Emerald',
-            'EX Unseen Forces': 'Unseen Forces',
-            'EX Delta Species': 'Delta Species',
-            'EX Legend Maker': 'Legend Maker',
-            'EX Holon Phantoms': 'Holon Phantoms',
-            'EX Crystal Guardians': 'Crystal Guardians',
-            'EX Dragon Frontiers': 'Dragon Frontiers',
-            'EX Power Keepers': 'Power Keepers',
-            'EX Team Magma vs Team Aqua': 'Team Magma vs Team Aqua',
-            'Nintendo Black Star Promos': 'Nintendo Promos',
-            'Best of Game': 'Best of Game',
-            'EX Trainer Kit Latias': 'EX Trainer Kit Latias',
-            'EX Trainer Kit Latios': 'EX Trainer Kit Latios',
-            'EX Trainer Kit 2 Plusle': 'EX Trainer Kit 2 Plusle',
-            'EX Trainer Kit 2 Minun': 'EX Trainer Kit 2 Minun',
-            // Gen 4 — DP / HGSS
-            'Diamond & Pearl': 'Diamond and Pearl',
-            'HeartGold and SoulSilver': 'HeartGold SoulSilver',
-            'DP Black Star Promos': 'Diamond and Pearl Promos',
-            'DP Trainer Kit: Manaphy & Lucario': 'DP Trainer Kit',
-            'Golden Sky, Silvery Ocean': 'HeartGold SoulSilver',
-            'HGSS Trainer Kit: Gyarados & Raichu': 'HGSS Trainer Kit',
-            'HGSS Promos': 'HGSS Promos',
-            // Gen 5 — BW
-            'Black and White': 'Black and White',
-            "McDonald's Collection 2011": "McDonald's Collection 2011",
-            'McDonalds Collection 2012': "McDonald's Collection 2012",
-            // Gen 6 — XY
-            'X and Y': 'XY Base Set',
-            'X and Y Black Star Promos': 'XY Promos',
-            'Flashfire': 'XY - Flashfire',
-            'Furious Fists': 'XY - Furious Fists',
-            'Phantom Forces': 'XY - Phantom Forces',
-            'Primal Clash': 'XY - Primal Clash',
-            'Roaring Skies': 'XY - Roaring Skies',
-            'Ancient Origins': 'XY - Ancient Origins',
-            'BREAKthrough': 'XY - BREAKthrough',
-            'BREAKpoint': 'XY - BREAKpoint',
-            'Generations': 'Generations',
-            'Fates Collide': 'XY - Fates Collide',
-            'Steam Siege': 'XY - Steam Siege',
-            'Evolutions': 'XY - Evolutions',
-            'XY Trainer Kit: Bisharp & Wigglytuff': 'XY Trainer Kit',
-            "McDonald's Collection 2014": "McDonald's Collection 2014",
-            'XY Trainer Kit: Latias & Latios': 'XY Trainer Kit',
-            "McDonald's Collection 2015": "McDonald's Collection 2015",
-            'XY Trainer Kit: Pikachu Libre & Suicune': 'XY Trainer Kit',
-            // Gen 7 — SM
-            'Sun and Moon': 'SM Base Set',
-            'Guardians Rising': 'SM - Guardians Rising',
-            'Burning Shadows': 'SM - Burning Shadows',
-            'Shining Legends': 'Shining Legends',
-            'Crimson Invasion': 'SM - Crimson Invasion',
-            'Ultra Prism': 'SM - Ultra Prism',
-            'Forbidden Light': 'SM - Forbidden Light',
-            'Celestial Storm': 'SM - Celestial Storm',
-            'Dragon Majesty': 'Dragon Majesty',
-            'Lost Thunder': 'SM - Lost Thunder',
-            'Team Up': 'SM - Team Up',
-            'Detective Pikachu': 'Detective Pikachu',
-            'Unbroken Bonds': 'SM - Unbroken Bonds',
-            'Unified Minds': 'SM - Unified Minds',
-            'Hidden Fates': 'Hidden Fates',
-            'Cosmic Eclipse': 'SM - Cosmic Eclipse',
-            'Sun and Moon Black Star Promos': 'SM Promos',
-            // Gen 8 — SWSH
-            'Sword and Shield': 'Sword & Shield Base Set',
-            'Rebel Clash': 'SWSH02: Rebel Clash',
-            'Darkness Ablaze': 'SWSH03: Darkness Ablaze',
-            'Vivid Voltage': 'SWSH04: Vivid Voltage',
-            'Battle Styles': 'SWSH05: Battle Styles',
-            'Chilling Reign': 'SWSH06: Chilling Reign',
-            'Evolving Skies': 'SWSH07: Evolving Skies',
-            'Fusion Strike': 'SWSH08: Fusion Strike',
-            'Brilliant Stars': 'SWSH09: Brilliant Stars',
-            'Astral Radiance': 'SWSH10: Astral Radiance',
-            'Lost Origin': 'SWSH11: Lost Origin',
-            'Silver Tempest': 'SWSH12: Silver Tempest',
-            'Sword and Shield Promos': 'SWSH: Sword & Shield Promo Cards',
-            "Champion's Path": "Champion's Path",
-            'Shining Fates': 'Shining Fates',
-            'Celebrations': 'Celebrations',
-            'Pokemon GO': 'Pokemon GO',
-            'Crown Zenith': 'Crown Zenith',
-            "McDonald's 25th Anniversary Promos": "McDonald's 25th Anniversary",
-            "McDonald's Collection 2652": "McDonald's 25th Anniversary",
-            // Gen 9 — SV
-            'Scarlet & Violet': 'SV01: Scarlet & Violet Base Set',
-            'Paldea Evolved': 'SV02: Paldea Evolved',
-            'Obsidian Flames': 'SV03: Obsidian Flames',
-            'Paradox Rift': 'SV04: Paradox Rift',
-            'Temporal Forces': 'SV05: Temporal Forces',
-            'Twilight Masquerade': 'SV06: Twilight Masquerade',
-            'Stellar Crown': 'SV07: Stellar Crown',
-            'Surging Sparks': 'SV08: Surging Sparks',
-            'Journey Together': 'SV09: Journey Together',
-            'Destined Rivals': 'SV10: Destined Rivals',
-            '151': 'SV: Scarlet & Violet 151',
-            'Paldean Fates': 'SV: Paldean Fates',
-            'Shrouded Fable': 'SV: Shrouded Fable',
-            'Prismatic Evolution': 'SV: Prismatic Evolutions',
-            'Black Bolt': 'SV: Black Bolt',
-            'White Flare': 'SV: White Flare',
-            'SV2a: Pokemon Card 151': 'SV: Scarlet & Violet 151',
-            'SV5K: Wild Force': 'Wild Force',
-            'SV5M: Cyber Judge': 'Cyber Judge',
-            'SV8a: Terastal Fest ex': 'Terastal Fest ex',
-            // POP Series
-            'POP Series 1': 'POP Series 1',
-            'POP Series 2': 'POP Series 2',
-            'Pop Series 3': 'POP Series 3',
-            'Pop Series 4': 'POP Series 4',
-            'POP Series 5': 'POP Series 5',
-            'POP Series 6': 'POP Series 6',
-            'POP Series 7': 'POP Series 7',
-            'Pop Series 8': 'POP Series 8',
-            'Pop Series 9': 'POP Series 9',
-        };
-        const mappedApiSetName = SET_API_MAP[setName];
-        const mappedApiSet = mappedApiSetName ? norm(mappedApiSetName) : null;
-
-        let bestMatch = null;
-        let bestScore = -1;
-
-        for (const r of results) {
-            const ci = r.card_info || {};
-            const apiSet = norm(ci.set_name || '');
-            const apiSetBase = norm(stripPrefix(stripParens(ci.set_name || '')));
-            const apiCard = norm((ci.name || ci.clean_name || '').replace(/^[_]+(?:'s\s+)?/, ''));
-            const apiNum = normNum(ci.card_number || '');
-            
-            let score = 0;
-
-            // Exact mapped set match (highest priority)
-            if (mappedApiSet && apiSet === mappedApiSet) {
-                score += 150;
-            }
-            // Exact set match
-            else if (apiSet === targetSet) {
-                score += 100;
-            }
-            // Base set names match (e.g. both are "Base Set" ignoring parenthetical)
-            else if (apiSetBase === targetSetBase) {
-                score += 75;
-            }
-            else if (apiSet.includes(targetSetBase) || targetSetBase.includes(apiSet)) {
-                score += 50;
-            }
-            // Promo set matching: both contain "blackstarpromo" or "promo"
-            else if (targetSetBase.includes('blackstarpromo') && apiSet.includes('promo')) {
-                // Check for era match (wizards/wotc vs dp vs sm etc.)
-                if ((targetSetBase.includes('wizards') || targetSetBase.includes('wotc')) && 
-                    (apiSet.includes('wizards') || apiSet.includes('wotc') || apiSet.includes('wotcpromo'))) {
-                    score += 75;
-                } else if ((targetSetBase.includes('dp') || targetSetBase.includes('diamondpearl')) && 
-                    (apiSet.includes('dp') || apiSet.includes('diamondpearl'))) {
-                    score += 75;
-                } else if (apiSet.includes('blackstar')) {
-                    score += 40;
-                }
-                // Wrong era promos get score 0 (rejected by min threshold)
-            }
-
-            // Card number match (only counts if we have some set match to prevent wrong-set matches)
-            if (targetNum && apiNum && score > 0) {
-                if (apiNum === targetNum) {
-                    score += 200;
-                } else {
-                    // Compare just the card number part (before any slash), stripping non-digits
-                    // e.g. "04/53" → "4", "WBSP-001" → "1"
-                    const apiDigits = apiNum.split('/')[0].replace(/[^0-9]/g, '');
-                    const targetDigits = targetNum.split('/')[0].replace(/[^0-9]/g, '');
-                    if (apiDigits && targetDigits && apiDigits === targetDigits) {
-                        score += 180;
-                    } else if (apiDigits && targetDigits) {
-                        // Wrong card number → strong penalty to prevent matching
-                        // the wrong promo variant (e.g. Pikachu #1 vs Pikachu #4)
-                        score -= 100;
-                    }
-                }
-            }
-
-            // Card name match
-            if (apiCard === targetCard || apiCard.includes(targetCard) || targetCard.includes(apiCard)) {
-                score += 10;
-            }
-
-            if (score > bestScore) {
-                bestScore = score;
-                bestMatch = r;
-            }
-        }
-
-        // Require a minimum score to avoid false positives from unrelated sets
-        if (bestScore < 50) {
-            console.log(`[findBestMatch] No match above threshold for "${cardName}" #${cardNumber} in "${setName}". Best score: ${bestScore}`, results.length > 0 ? results.slice(0,2).map(r => ({name: r.card_info?.name, set: r.card_info?.set_name, num: r.card_info?.card_number})) : 'no results');
-            return null;
-        }
-        return bestMatch;
-    }
-
+    // Extract price from pokemontcg.io card data (Phase 1 bulk fetch format)
     extractPrice(cardData) {
         let tcgplayerUrl = null;
-        
+
         // Map of sub_type_name -> { market, low }
         const variantPrices = {};
         let firstMarket = null;
@@ -707,7 +524,6 @@ class PriceService {
     }
 
     async fetchSetPrices(set, onProgress) {
-        if (!this.apiKey) return { success: false, reason: 'no_key' };
         let fetched = 0;
         let cached = 0;
         const haveCards = set.cards.filter(c => c.status === 'HAVE');
@@ -746,32 +562,46 @@ class PriceService {
                 this.saveCache();
                 if (onProgress) onProgress(fetched, uncachedCards.length, null);
             } catch (e) {
-                console.warn('[PriceFetch] Bulk fetch failed, will try individual:', e);
+                console.warn('[PriceFetch] Bulk fetch failed, will try JustTCG:', e);
             }
         }
 
-        // PHASE 2: Individual PokéWallet lookups for any remaining misses
+        // PHASE 2: JustTCG batch lookup for remaining misses + condition price enrichment
         const stillMissing = uncachedCards.filter(c => !this.cache[this.getCacheKey(c.name, set.name, c.number)]);
 
-        if (stillMissing.length > 0) {
-            console.log(`[PriceFetch] ${fetched} bulk hits, ${stillMissing.length} remaining for PokéWallet`);
-            for (const card of stillMissing) {
-                const cacheKey = this.getCacheKey(card.name, set.name, card.number);
-                if (this.cache[cacheKey]) continue; // double-check
+        if (this.apiKey && (stillMissing.length > 0 || fetched > 0)) {
+            const cardNumbers = stillMissing.length > 0
+                ? stillMissing.map(c => c.number)
+                : uncachedCards.map(c => c.number);
 
-                const result = await this.fetchCardPrice(card.name, set.name, card.number, null);
+            try {
+                if (onProgress) onProgress(fetched + cached, total, 'Fetching condition prices...');
+                const justTCGResults = await this.justTCG.batchFetchPrices(set.name, cardNumbers);
 
-                if (result && result.rateLimited) {
-                    this.saveCache();
-                    return { success: false, reason: 'rate_limited', fetched, cached, total: set.cards.length };
+                for (const card of (stillMissing.length > 0 ? stillMissing : uncachedCards)) {
+                    const cacheKey = this.getCacheKey(card.name, set.name, card.number);
+                    const jtcgResult = justTCGResults[card.number];
+
+                    if (jtcgResult) {
+                        if (this.cache[cacheKey]) {
+                            // Enrich existing Phase 1 data with JustTCG condition prices
+                            this.cache[cacheKey].conditionPrices = jtcgResult.conditionPrices;
+                            this.cache[cacheKey].priceChanges = jtcgResult.priceChanges;
+                            this.cache[cacheKey].source = 'pokemontcg+justtcg';
+                        } else {
+                            // Use JustTCG as the sole price source for this card
+                            this.cache[cacheKey] = jtcgResult;
+                            fetched++;
+                        }
+                    }
                 }
 
-                if (result && result.market) fetched++;
                 if (onProgress) onProgress(fetched + cached, total, null);
-
-                // 500ms delay between PokéWallet calls
-                await new Promise(r => setTimeout(r, 500));
+            } catch (e) {
+                console.warn('[PriceFetch] JustTCG batch failed:', e);
             }
+        } else if (stillMissing.length > 0) {
+            console.log(`[PriceFetch] ${stillMissing.length} cards missing but no JustTCG API key configured`);
         }
 
         this.saveCache();
@@ -2971,7 +2801,7 @@ class App {
     // UTILITIES
     // =============================================
     getCardUrl(card, set) {
-        // Use direct TCGPlayer URL from PokéWallet if available
+        // Use direct TCGPlayer URL if available from pokemontcg.io Phase 1, otherwise generate search URL
         const price = this.priceService.getCachedPrice(card.name, set.name, card.number);
         if (price && price.tcgplayerUrl) {
             return price.tcgplayerUrl;
@@ -3006,6 +2836,7 @@ class App {
         const condition = card.condition || 'NM';
         const multiplier = CONDITION_MULTIPLIERS[condition] || 1;
         const url = price.tcgplayerUrl || this.getTcgPlayerUrl(card.name, set.name);
+        const hasConditionPrices = price.conditionPrices && Object.keys(price.conditionPrices).length > 0;
         
         const variants = this.resolveCardVariants(card);
         const lines = [];
@@ -3013,20 +2844,45 @@ class App {
         for (const v of variants) {
             const vp = this.findVariantPrice(price.variantPrices, v.apiName);
             if (vp && vp.market) {
-                const adj = vp.market * multiplier;
-                const tip = condition !== 'NM'
-                    ? `${v.label} NM: $${vp.market.toFixed(2)} × ${(multiplier*100).toFixed(0)}%`
-                    : `${v.label}: $${vp.market.toFixed(2)}`;
-                lines.push(`<a href="${url}" target="_blank" rel="noopener" class="price-line" title="${tip}" style="text-decoration:none"><span class="price-label">${v.tag}</span>$${adj.toFixed(2)}</a>`);
+                // Use real condition price from JustTCG if available, else multiplier estimate
+                let adj;
+                let tip;
+                if (hasConditionPrices && price.conditionPrices[v.apiName] && price.conditionPrices[v.apiName][condition] !== undefined) {
+                    adj = price.conditionPrices[v.apiName][condition];
+                    tip = `${v.label} ${condition}: $${adj.toFixed(2)} (market)`;
+                } else {
+                    adj = vp.market * multiplier;
+                    tip = condition !== 'NM'
+                        ? `${v.label} NM: $${vp.market.toFixed(2)} × ${(multiplier*100).toFixed(0)}% (est.)`
+                        : `${v.label}: $${vp.market.toFixed(2)}`;
+                }
+
+                // Condition badge for non-NM
+                const condBadge = condition !== 'NM'
+                    ? `<span class="cond-badge cond-${condition.toLowerCase()}">${condition}</span>`
+                    : '';
+
+                lines.push(`<a href="${url}" target="_blank" rel="noopener" class="price-line" title="${tip}" style="text-decoration:none"><span class="price-label">${v.tag}</span>${condBadge}$${adj.toFixed(2)}</a>`);
             }
         }
 
-        if (lines.length > 0) return lines.join('');
+        // 24h price trend indicator
+        let trendHtml = '';
+        if (price.priceChanges && price.priceChanges['24h'] !== undefined) {
+            const change = price.priceChanges['24h'];
+            if (change > 0) {
+                trendHtml = `<span class="price-trend trend-up" title="24h: +${change.toFixed(1)}%">↑${change.toFixed(1)}%</span>`;
+            } else if (change < 0) {
+                trendHtml = `<span class="price-trend trend-down" title="24h: ${change.toFixed(1)}%">↓${Math.abs(change).toFixed(1)}%</span>`;
+            }
+        }
+
+        if (lines.length > 0) return lines.join('') + trendHtml;
 
         // Fallback: show first available price
         if (price.market) {
-            const adj = price.market * multiplier;
-            return `<a href="${url}" target="_blank" rel="noopener" class="price-cell" style="text-decoration:none">$${adj.toFixed(2)}</a>`;
+            const adj = hasConditionPrices ? (price.market * multiplier) : price.market * multiplier;
+            return `<a href="${url}" target="_blank" rel="noopener" class="price-cell" style="text-decoration:none">$${adj.toFixed(2)}</a>` + trendHtml;
         }
         return '<span class="price-cell loading-price">—</span>';
     }
@@ -3108,6 +2964,7 @@ class App {
 
         const condition = card.condition || 'NM';
         const multiplier = CONDITION_MULTIPLIERS[condition] || 1;
+        const hasConditionPrices = price.conditionPrices && Object.keys(price.conditionPrices).length > 0;
 
         if (price.variantPrices) {
             const variants = this.resolveCardVariants(card);
@@ -3120,11 +2977,14 @@ class App {
             for (const v of variants) {
                 const vp = this.findVariantPrice(price.variantPrices, v.apiName);
                 if (vp && vp.market) {
-                    // Avoid double-counting if two variant paths resolve to the same fallback
-                    const key = vp.market.toFixed(4);
                     if (!counted.has(v.apiName)) {
                         counted.add(v.apiName);
-                        variantTotal += vp.market * multiplier;
+                        // Use real condition price from JustTCG if available
+                        if (hasConditionPrices && price.conditionPrices[v.apiName] && price.conditionPrices[v.apiName][condition] !== undefined) {
+                            variantTotal += price.conditionPrices[v.apiName][condition];
+                        } else {
+                            variantTotal += vp.market * multiplier;
+                        }
                         foundAny = true;
                     }
                 }
