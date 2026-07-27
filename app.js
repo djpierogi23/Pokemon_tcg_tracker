@@ -204,6 +204,18 @@ class JustTCGService {
         'Reverse Holo': 'Reverse Holofoil',
         '1st Edition': '1st Edition',
         '1st Edition Holo': '1st Edition Holofoil',
+        '1st Edition Holofoil': '1st Edition Holofoil',
+        '1st Edition Normal': '1st Edition',
+        'Shadowless': 'Shadowless',
+        'Shadowless Holo': 'Shadowless Holofoil',
+        'Shadowless Holofoil': 'Shadowless Holofoil',
+    };
+
+    // Map edition to allowed JustTCG printing names
+    static EDITION_PRINTINGS = {
+        '1st': ['1st Edition', '1st Edition Holo', '1st Edition Holofoil', '1st Edition Normal'],
+        'shadowless': ['Shadowless', 'Shadowless Holo', 'Shadowless Holofoil'],
+        'unlimited': ['Normal', 'Holo', 'Foil', 'Reverse Holo'],
     };
 
     // Fetch prices for a single card by set + number
@@ -243,7 +255,7 @@ class JustTCGService {
     }
 
     // Batch fetch prices for multiple cards
-    async batchFetchPrices(setName, cardNumbers) {
+    async batchFetchPrices(setName, cardNumbers, edition) {
         if (!this.apiKey || cardNumbers.length === 0) return {};
 
         const setSlug = this.slugifySetName(setName);
@@ -274,7 +286,7 @@ class JustTCGService {
 
                 for (const card of cards) {
                     if (card.number && cardNumbers.includes(card.number)) {
-                        results[card.number] = this.extractPriceInfo(card);
+                        results[card.number] = this.extractPriceInfo(card, edition);
                     }
                 }
 
@@ -297,7 +309,8 @@ class JustTCGService {
     }
 
     // Extract condition-specific pricing from JustTCG card data
-    extractPriceInfo(card) {
+    // edition: '1st', 'shadowless', 'unlimited', or null (use all)
+    extractPriceInfo(card, edition) {
         const conditionPrices = {};  // { "Holofoil": { "NM": 12.50, "LP": 10.80, ... }, ... }
         const priceChanges = {};
         let bestMarket = null;
@@ -307,8 +320,16 @@ class JustTCGService {
             return null;
         }
 
+        // Filter variants by edition if specified
+        const allowedPrintings = edition ? JustTCGService.EDITION_PRINTINGS[edition] : null;
+
         for (const variant of card.variants) {
             if (variant.price === null || variant.price === undefined) continue;
+
+            // Skip variants that don't match the requested edition
+            if (allowedPrintings && variant.printing && !allowedPrintings.includes(variant.printing)) {
+                continue;
+            }
 
             const printing = JustTCGService.PRINTING_MAP[variant.printing] || variant.printing || 'Normal';
             const condition = JustTCGService.CONDITION_MAP[variant.condition] || 'NM';
@@ -570,7 +591,10 @@ class PriceService {
         // Card numbers in our collection may be "1/64" format while API returns "1"
         const normalizeNumber = (n) => (n || '').split('/')[0].trim();
 
-        if (set.id) {
+        // Skip Phase 1 for 1st Edition and Shadowless — pokemontcg.io only has Unlimited pricing
+        const skipPhase1 = set.edition && (set.edition === '1st' || set.edition === 'shadowless');
+
+        if (set.id && !skipPhase1) {
             try {
                 if (onProgress) onProgress(0, uncachedCards.length, 'Bulk fetching prices...');
                 const bulkHits = await this.bulkFetchPrices(set);
@@ -600,7 +624,7 @@ class PriceService {
 
             try {
                 if (onProgress) onProgress(fetched + cached, total, 'Fetching condition prices...');
-                const justTCGResults = await this.justTCG.batchFetchPrices(set.name, cardNumbers);
+                const justTCGResults = await this.justTCG.batchFetchPrices(set.name, cardNumbers, set.edition || null);
 
                 for (const card of (stillMissing.length > 0 ? stillMissing : uncachedCards)) {
                     const cacheKey = this.getCacheKey(card.name, set.name, card.number);
