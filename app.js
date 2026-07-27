@@ -316,13 +316,6 @@ class JustTCGService {
         console.log(`[JustTCG] Batch fetch starting: setName="${setName}", slug="${setSlug}", edition=${edition}, cards=${cardNumbers.length}`);
         console.log(`[JustTCG] Looking for card numbers:`, normalizedNumbers.slice(0, 10).join(', '), normalizedNumbers.length > 10 ? `... (${normalizedNumbers.length} total)` : '');
 
-        // Debug: show slug cache entries matching this set
-        if (this._slugCache) {
-            const matching = Object.entries(this._slugCache).filter(([k, v]) =>
-                k.toLowerCase().includes('base') || v.includes('base'));
-            console.log(`[JustTCG] Slug cache entries with "base":`, matching);
-        }
-
         // Fetch by set name with pagination (more efficient than individual lookups)
         try {
             let offset = 0;
@@ -413,15 +406,25 @@ class JustTCGService {
         }
 
         // Filter variants by edition if specified
-        const allowedPrintings = edition ? JustTCGService.EDITION_PRINTINGS[edition] : null;
+        let allowedPrintings = edition ? JustTCGService.EDITION_PRINTINGS[edition] : null;
 
-        for (const variant of card.variants) {
-            if (variant.price === null || variant.price === undefined) continue;
-
-            // Skip variants that don't match the requested edition
-            if (allowedPrintings && variant.printing && !allowedPrintings.includes(variant.printing)) {
-                continue;
+        // First pass: try with edition filtering
+        let matchedVariants = card.variants;
+        if (allowedPrintings) {
+            const editionFiltered = card.variants.filter(v =>
+                v.printing && allowedPrintings.includes(v.printing) && v.price != null
+            );
+            if (editionFiltered.length > 0) {
+                matchedVariants = editionFiltered;
+            } else {
+                // API doesn't use edition-specific printing names (e.g. Base Set uses
+                // "Normal"/"Holofoil" for all editions) — accept all printings
+                allowedPrintings = null;
             }
+        }
+
+        for (const variant of matchedVariants) {
+            if (variant.price === null || variant.price === undefined) continue;
 
             const printing = JustTCGService.PRINTING_MAP[variant.printing] || variant.printing || 'Normal';
             const condition = JustTCGService.CONDITION_MAP[variant.condition] || 'NM';
