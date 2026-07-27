@@ -1517,6 +1517,7 @@ main {
 
 .toast.success { color: var(--accent-green); }
 .toast.error { color: var(--accent-red); }
+.toast.info { color: var(--accent-blue, #64b5f6); }
 
 @keyframes slideUp {
     from { opacity: 0; transform: translateY(24px) scale(0.9); }

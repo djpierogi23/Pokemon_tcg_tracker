@@ -1742,8 +1742,7 @@ class App {
 
     async bulkFetchGen(genId) {
         if (!this.priceService.getApiKey()) {
-            this.showToast('Set your PokéWallet API key in Import/Export first', 'error');
-            return;
+            this.showToast('No JustTCG API key — fetching base prices only. Add your key in Settings for condition pricing.', 'info');
         }
         const gen = this.store.data.generations.find(g => g.id === genId);
         if (!gen) return;
@@ -3060,8 +3059,7 @@ class App {
     async fetchSetPrices() {
         if (this.fetchingPrices) return;
         if (!this.priceService.getApiKey()) {
-            this.showToast('Add your PokéWallet API key in Settings first!', 'error');
-            return;
+            this.showToast('No JustTCG API key — fetching base prices only. Add your key in Settings for condition pricing.', 'info');
         }
 
         const result = this.store.findSetById(this.currentSetId);
