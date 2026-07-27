@@ -132,21 +132,15 @@ class JustTCGService {
     // Map our internal set names to JustTCG slug format
     // Uses a dynamic cache fetched from the /v1/sets endpoint
     slugifySetName(setName) {
-        if (this._slugCache) {
-            // 1) Exact match (e.g. "Base Set (Shadowless)" matches JustTCG's "Base Set (Shadowless)")
-            if (this._slugCache[setName]) {
-                return this._slugCache[setName];
-            }
-            // 2) Try stripping our edition qualifier — "Base Set (1st Edition)" → "Base Set"
-            const stripped = setName.replace(/\s*\(.*?\)\s*/g, '').trim();
-            if (stripped !== setName && this._slugCache[stripped]) {
-                return this._slugCache[stripped];
-            }
+        // 1) Exact match in dynamic cache (e.g. "Base Set (Shadowless)" → "base-set-shadowless-pokemon")
+        if (this._slugCache && this._slugCache[setName]) {
+            return this._slugCache[setName];
         }
 
-        // Hardcoded fallback for non-obvious slugs (suffix format: {name}-pokemon)
+        // 2) Hardcoded overrides — checked BEFORE stripping parenthetical so edition-specific
+        //    mappings aren't lost (e.g. "Base Set (1st Edition)" → shadowless set, not unlimited)
         const SLUG_MAP = {
-            'Base Set (1st Edition)': 'base-set-pokemon',
+            'Base Set (1st Edition)': 'base-set-shadowless-pokemon',  // 1st Ed is in the Shadowless set
             'Base Set (Unlimited)': 'base-set-pokemon',
             'Base Set (Shadowless)': 'base-set-shadowless-pokemon',
             'Expansion Pack': 'base-set-pokemon',
@@ -156,6 +150,14 @@ class JustTCGService {
         };
 
         if (SLUG_MAP[setName]) return SLUG_MAP[setName];
+
+        // 3) Try stripping our edition qualifier — "Jungle (1st Edition)" → "Jungle"
+        if (this._slugCache) {
+            const stripped = setName.replace(/\s*\(.*?\)\s*/g, '').trim();
+            if (stripped !== setName && this._slugCache[stripped]) {
+                return this._slugCache[stripped];
+            }
+        }
 
         // Default: strip parenthetical qualifiers, slugify, append "-pokemon"
         const slug = setName
