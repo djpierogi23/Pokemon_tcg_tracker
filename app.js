@@ -260,6 +260,9 @@ class JustTCGService {
 
         const setSlug = this.slugifySetName(setName);
         const results = {};
+        // Normalize card numbers: "4/102" -> "4" for matching with API results
+        const normalizeNum = (n) => (n || '').split('/')[0].trim();
+        const normalizedNumbers = cardNumbers.map(normalizeNum);
 
         // Fetch by set name with pagination (more efficient than individual lookups)
         try {
@@ -285,7 +288,7 @@ class JustTCGService {
                 const cards = data.data || [];
 
                 for (const card of cards) {
-                    if (card.number && cardNumbers.includes(card.number)) {
+                    if (card.number && normalizedNumbers.includes(card.number)) {
                         results[card.number] = this.extractPriceInfo(card, edition);
                     }
                 }
@@ -532,8 +535,9 @@ class PriceService {
                     // Unlimited/Shadowless: prioritize non-1st-edition subtypes
                     priorityKeys = ['holofoil', 'normal', 'reverseHolofoil', '1stEditionHolofoil', '1stEditionNormal'];
                 } else {
-                    // Default: normal -> holofoil -> reverse -> 1st edition
-                    priorityKeys = ['normal', 'holofoil', 'reverseHolofoil', '1stEditionHolofoil', '1stEditionNormal'];
+                    // Default: holofoil -> normal -> reverse -> 1st edition
+                    // holofoil first because non-holo cards won't have it (falls through to normal)
+                    priorityKeys = ['holofoil', 'normal', 'reverseHolofoil', '1stEditionHolofoil', '1stEditionNormal'];
                 }
 
                 for (const key of priorityKeys) {
@@ -640,7 +644,9 @@ class PriceService {
 
                 for (const card of (stillMissing.length > 0 ? stillMissing : uncachedCards)) {
                     const cacheKey = this.getCacheKey(card.name, set.name, card.number);
-                    const jtcgResult = justTCGResults[card.number];
+                    // JustTCG returns card.number as "4" but ours may be "4/102"
+                    const normalizedNum = (card.number || '').split('/')[0].trim();
+                    const jtcgResult = justTCGResults[normalizedNum] || justTCGResults[card.number];
 
                     if (jtcgResult) {
                         if (this.cache[cacheKey]) {
