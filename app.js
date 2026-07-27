@@ -130,51 +130,28 @@ class JustTCGService {
     }
 
     // Map our internal set names to JustTCG slug format
+    // Uses a dynamic cache fetched from the /v1/sets endpoint
     slugifySetName(setName) {
-        // Override map for non-obvious slugs
+        // Check dynamic cache first (populated by fetchSetSlugs)
+        if (this._slugCache && this._slugCache[setName]) {
+            return this._slugCache[setName];
+        }
+
+        // Override map for non-obvious slugs (with pokemon- prefix based on API format)
         const SLUG_MAP = {
-            'Base Set (1st Edition)': 'base-set',
-            'Base Set (Unlimited)': 'base-set',
-            'Base Set (Shadowless)': 'base-set',
-            'Expansion Pack': 'base-set',
-            'Gold, Silver, to a New World...': 'neo-genesis',
-            'Challenge from the Darkness': 'neo-discovery',
-            'Pokémon VS': 'pokemon-vs',
-            'EX Ruby & Sapphire': 'ruby-sapphire',
-            'EX Sandstorm': 'sandstorm',
-            'EX Dragon': 'dragon',
-            'EX Hidden Legends': 'hidden-legends',
-            'EX FireRed & LeafGreen': 'firered-leafgreen',
-            'EX Team Rocket Returns': 'team-rocket-returns',
-            'EX Deoxys': 'deoxys',
-            'EX Emerald': 'emerald',
-            'EX Unseen Forces': 'unseen-forces',
-            'EX Delta Species': 'delta-species',
-            'EX Legend Maker': 'legend-maker',
-            'EX Holon Phantoms': 'holon-phantoms',
-            'EX Crystal Guardians': 'crystal-guardians',
-            'EX Dragon Frontiers': 'dragon-frontiers',
-            'EX Power Keepers': 'power-keepers',
-            'EX Team Magma vs Team Aqua': 'team-magma-vs-team-aqua',
-            'Diamond & Pearl': 'diamond-pearl',
-            'HeartGold and SoulSilver': 'heartgold-soulsilver',
-            'Golden Sky, Silvery Ocean': 'heartgold-soulsilver',
-            'X and Y': 'xy',
-            'Sun and Moon': 'sun-moon',
-            'Sword and Shield': 'sword-shield',
-            'Scarlet & Violet': 'scarlet-violet',
-            '151': '151',
-            'SV2a: Pokemon Card 151': '151',
-            'SV5K: Wild Force': 'wild-force',
-            'SV5M: Cyber Judge': 'cyber-judge',
-            'SV8a: Terastal Fest ex': 'terastal-fest-ex',
-            'Prismatic Evolution': 'prismatic-evolutions',
+            'Base Set (1st Edition)': 'pokemon-base-set',
+            'Base Set (Unlimited)': 'pokemon-base-set',
+            'Base Set (Shadowless)': 'pokemon-base-set',
+            'Expansion Pack': 'pokemon-base-set',
+            'Gold, Silver, to a New World...': 'pokemon-neo-genesis',
+            'Challenge from the Darkness': 'pokemon-neo-discovery',
+            'Pokémon VS': 'pokemon-pokemon-vs',
         };
 
         if (SLUG_MAP[setName]) return SLUG_MAP[setName];
 
-        // Strip parenthetical qualifiers, then slugify
-        return setName
+        // Default: strip parenthetical qualifiers, prefix with "pokemon-", then slugify
+        const slug = setName
             .replace(/\s*\(.*?\)\s*/g, '')
             .replace(/^EX\s+/i, '')
             .toLowerCase()
@@ -185,6 +162,58 @@ class JustTCGService {
             .replace(/-+/g, '-')
             .replace(/^-|-$/g, '')
             .trim();
+
+        return `pokemon-${slug}`;
+    }
+
+    // Fetch all set slugs from JustTCG API and build a name→slug cache
+    async fetchSetSlugs() {
+        if (!this.apiKey) return;
+
+        // Check localStorage cache (valid for 24h)
+        const cacheKey = 'justtcg_set_slugs';
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+            try {
+                const parsed = JSON.parse(cached);
+                if (parsed.timestamp && Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
+                    this._slugCache = parsed.data;
+                    console.log(`[JustTCG] Loaded ${Object.keys(this._slugCache).length} cached set slugs`);
+                    return;
+                }
+            } catch (e) { /* ignore corrupt cache */ }
+        }
+
+        try {
+            console.log('[JustTCG] Fetching set slugs from API...');
+            const resp = await fetch(`${this.baseUrl}/sets?game=pokemon&limit=500`, {
+                headers: { 'x-api-key': this.apiKey },
+            });
+            if (!resp.ok) {
+                console.warn(`[JustTCG] Failed to fetch sets: HTTP ${resp.status}`);
+                return;
+            }
+            const data = await resp.json();
+            const sets = data.data || [];
+
+            this._slugCache = {};
+            for (const s of sets) {
+                const name = s.name || s.setName;
+                const slug = s.slug || s.id;
+                if (name && slug) {
+                    this._slugCache[name] = slug;
+                }
+            }
+
+            // Save to localStorage
+            localStorage.setItem(cacheKey, JSON.stringify({
+                timestamp: Date.now(),
+                data: this._slugCache,
+            }));
+            console.log(`[JustTCG] Cached ${Object.keys(this._slugCache).length} set slugs. Sample:`, Object.entries(this._slugCache).slice(0, 5));
+        } catch (e) {
+            console.warn('[JustTCG] Error fetching set slugs:', e);
+        }
     }
 
     // Map JustTCG condition names to our condition keys
@@ -221,6 +250,11 @@ class JustTCGService {
     // Fetch prices for a single card by set + number
     async fetchCardPrice(setName, cardNumber) {
         if (!this.apiKey) return null;
+
+        // Ensure we have the slug cache loaded
+        if (!this._slugCache) {
+            await this.fetchSetSlugs();
+        }
 
         const setSlug = this.slugifySetName(setName);
         const url = `${this.baseUrl}/cards?game=Pokemon&set=${encodeURIComponent(setSlug)}&number=${encodeURIComponent(cardNumber)}&include_price_history=false&include_statistics=false&include_null_prices=false`;
@@ -259,6 +293,11 @@ class JustTCGService {
         if (!this.apiKey || cardNumbers.length === 0) {
             console.log(`[JustTCG] Skipping batch: apiKey=${!!this.apiKey}, cardNumbers=${cardNumbers.length}`);
             return {};
+        }
+
+        // Ensure we have the slug cache loaded
+        if (!this._slugCache) {
+            await this.fetchSetSlugs();
         }
 
         const setSlug = this.slugifySetName(setName);
