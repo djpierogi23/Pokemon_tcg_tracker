@@ -257,7 +257,7 @@ class JustTCGService {
         }
 
         const setSlug = this.slugifySetName(setName);
-        const url = `${this.baseUrl}/cards?game=Pokemon&set=${encodeURIComponent(setSlug)}&number=${encodeURIComponent(cardNumber)}&include_price_history=false&include_statistics=false&include_null_prices=false`;
+        const url = `${this.baseUrl}/cards?game=Pokemon&set=${encodeURIComponent(setSlug)}&number=${encodeURIComponent(cardNumber)}`;
 
         try {
             const resp = await fetch(url, {
@@ -317,7 +317,7 @@ class JustTCGService {
             let totalCardsReceived = 0;
 
             while (hasMore) {
-                const url = `${this.baseUrl}/cards?game=Pokemon&set=${encodeURIComponent(setSlug)}&limit=${limit}&offset=${offset}&include_price_history=false&include_statistics=true&include_null_prices=false`;
+                const url = `${this.baseUrl}/cards?game=Pokemon&set=${encodeURIComponent(setSlug)}&limit=${limit}&offset=${offset}`;
 
                 console.log(`[JustTCG] Fetching: offset=${offset}`);
                 const resp = await fetch(url, {
