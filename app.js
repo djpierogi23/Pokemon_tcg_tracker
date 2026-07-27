@@ -547,6 +547,9 @@ class PriceService {
         }
 
         // PHASE 1: Bulk fetch from pokemontcg.io (1-2 API calls for the entire set)
+        // Card numbers in our collection may be "1/64" format while API returns "1"
+        const normalizeNumber = (n) => (n || '').split('/')[0].trim();
+
         if (set.id) {
             try {
                 if (onProgress) onProgress(0, uncachedCards.length, 'Bulk fetching prices...');
@@ -554,8 +557,9 @@ class PriceService {
                 // Cache all hits
                 for (const card of uncachedCards) {
                     const cacheKey = this.getCacheKey(card.name, set.name, card.number);
-                    if (bulkHits[card.number]) {
-                        this.cache[cacheKey] = bulkHits[card.number];
+                    const apiNumber = normalizeNumber(card.number);
+                    if (bulkHits[apiNumber] || bulkHits[card.number]) {
+                        this.cache[cacheKey] = bulkHits[apiNumber] || bulkHits[card.number];
                         fetched++;
                     }
                 }
